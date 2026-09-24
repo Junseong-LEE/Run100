@@ -14,6 +14,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query private var allSessions: [RunSession]
+    @Query private var allShoes: [RunningShoe]
     
     var isPresentedAsSheet: Bool = false
     
@@ -27,6 +28,10 @@ struct SettingsView: View {
     @State private var syncResultMessage = ""
     @State private var showSyncResultAlert = false
     @State private var showReleaseNotes = false
+    
+    private var activeShoe: RunningShoe? {
+        allShoes.first(where: { $0.isActive && !$0.isRetired })
+    }
     
     private let targetPresets: [Double] = [50.0, 100.0, 150.0]
     
@@ -88,7 +93,53 @@ struct SettingsView: View {
                         .font(.caption2)
                 }
                 
-                // 2. 화면 테마 모드 섹션
+                // 2. 내 러닝화(장비) 관리 섹션 (추천 1)
+                Section {
+                    NavigationLink {
+                        ShoeManagementView()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "shoe.2.fill")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundStyle(Color.orange)
+                                .frame(width: 24)
+                            
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("내 러닝화 관리")
+                                    .font(.system(size: 15, weight: .semibold))
+                                
+                                if let shoe = activeShoe {
+                                    let totalDist = shoe.calculateTotalDistance(from: allSessions)
+                                    let percent = Int(shoe.wearRate(from: allSessions) * 100)
+                                    Text("\(shoe.name) · \(String(format: "%.1f", totalDist))/\(Int(shoe.targetLifespanKm))km (\(percent)%)")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.secondary)
+                                } else {
+                                    Text("러닝화를 등록하고 수명과 교체 주기를 트래킹하세요")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            if let shoe = activeShoe {
+                                let status = shoe.healthStatus(from: allSessions)
+                                Text(status.label)
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundStyle(status.badgeColor)
+                                    .padding(.horizontal, 7)
+                                    .padding(.vertical, 3)
+                                    .background(status.badgeColor.opacity(0.12))
+                                    .clipShape(Capsule())
+                            }
+                        }
+                    }
+                } header: {
+                    Label("장비 관리", systemImage: "tshirt.fill")
+                }
+                
+                // 3. 화면 테마 모드 섹션
                 Section {
                     Picker("화면 모드", selection: $appTheme) {
                         Text("다크 모드 (기본)").tag("dark")

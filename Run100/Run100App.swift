@@ -14,6 +14,6 @@ struct Run100App: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: RunSession.self)
+        .modelContainer(for: [RunSession.self, RunningShoe.self])
     }
 }

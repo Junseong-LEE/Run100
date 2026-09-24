@@ -34,6 +34,7 @@ struct DashboardView: View {
     @State private var sessionToEdit: RunSession? = nil
     @State private var sessionToDelete: RunSession? = nil
     @State private var showDeleteConfirmation = false
+    @State private var showShoeManagement = false
     
     /// 빠른 월 선택 메뉴를 위한 최근 12개월 목록
     private var availableMonthDates: [Date] {
@@ -177,6 +178,12 @@ struct DashboardView: View {
                     RunningTrackProgressCard(progress: progress)
                         .padding(.horizontal)
                     
+                    // 3-1. 주력 러닝화 소모 게이지 카드 (추천 2)
+                    ShoeWearCardView {
+                        showShoeManagement = true
+                    }
+                    .padding(.horizontal)
+                    
                     // 4. 최근 달리기 피드 섹션
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -249,6 +256,18 @@ struct DashboardView: View {
                 }
                 .presentationDetents([.fraction(0.55), .medium])
                 .presentationDragIndicator(.visible)
+            }
+            .sheet(isPresented: $showShoeManagement) {
+                NavigationStack {
+                    ShoeManagementView()
+                        .toolbar {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button("닫기") {
+                                    showShoeManagement = false
+                                }
+                            }
+                        }
+                }
             }
             .alert("애플 건강 동기화", isPresented: $showSyncResultAlert) {
                 Button("확인", role: .cancel) {}
