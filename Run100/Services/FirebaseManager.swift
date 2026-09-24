@@ -88,7 +88,7 @@ final class FirebaseManager: NSObject {
             
             DispatchQueue.main.async {
                 self.isAnnouncementActive = remoteConfig["announcement_active"].boolValue
-                self.announcementMessage = remoteConfig["announcement_message"].stringValue ?? ""
+                self.announcementMessage = remoteConfig["announcement_message"].stringValue
             }
         }
     }
