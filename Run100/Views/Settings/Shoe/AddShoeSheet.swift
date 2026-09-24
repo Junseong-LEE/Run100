@@ -33,6 +33,18 @@ struct AddShoeSheet: View {
         shoeToEdit != nil
     }
     
+    init(shoeToEdit: RunningShoe? = nil) {
+        self.shoeToEdit = shoeToEdit
+        _name = State(initialValue: shoeToEdit?.name ?? "")
+        _brand = State(initialValue: shoeToEdit?.brand ?? "")
+        _selectedType = State(initialValue: shoeToEdit?.shoeType ?? .cushion)
+        _targetLifespanKm = State(initialValue: shoeToEdit?.targetLifespanKm ?? 600.0)
+        _initialDistanceKm = State(initialValue: shoeToEdit?.initialDistanceKm ?? 0.0)
+        _startDate = State(initialValue: shoeToEdit?.startDate ?? Date())
+        _setAsActive = State(initialValue: shoeToEdit?.isActive ?? true)
+        _memo = State(initialValue: shoeToEdit?.memo ?? "")
+    }
+    
     var body: some View {
         NavigationStack {
             Form {

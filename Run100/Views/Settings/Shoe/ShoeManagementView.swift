@@ -105,7 +105,10 @@ struct ShoeManagementView: View {
             }
         }
         .sheet(isPresented: $showAddShoeSheet) {
-            AddShoeSheet(shoeToEdit: shoeToEdit)
+            AddShoeSheet()
+        }
+        .sheet(item: $shoeToEdit) { shoe in
+            AddShoeSheet(shoeToEdit: shoe)
         }
         .confirmationDialog(
             "러닝화 은퇴",
@@ -266,7 +269,6 @@ struct ShoeManagementView: View {
                 Button {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     shoeToEdit = shoe
-                    showAddShoeSheet = true
                 } label: {
                     HStack(spacing: 4) {
                         Image(systemName: "pencil")
@@ -403,7 +405,6 @@ struct ShoeManagementView: View {
             Menu {
                 Button {
                     shoeToEdit = shoe
-                    showAddShoeSheet = true
                 } label: {
                     Label("수정", systemImage: "pencil")
                 }
