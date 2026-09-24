@@ -168,21 +168,21 @@ struct DashboardView: View {
                         ))
                     }
                     
-                    // 2. 100km 프로그레스 링 히어로 카드
-                    HeroDashboardCard(progress: progress) {
-                        onSwitchToCalendar?()
-                    }
+                    // 2. 100km 프로그레스 링 히어로 카드 (하단에 스트릭 + 러닝화 소모량 칩 통합)
+                    HeroDashboardCard(
+                        progress: progress,
+                        onCalendarTap: {
+                            onSwitchToCalendar?()
+                        },
+                        onShoeTap: {
+                            showShoeManagement = true
+                        }
+                    )
                     .padding(.horizontal)
                     
                     // 3. 기능 F-103: 100km 러닝 트랙 & 최근 3개월 동기간(N일차) 과거의 나와 누적 경쟁
                     RunningTrackProgressCard(progress: progress)
                         .padding(.horizontal)
-                    
-                    // 3-1. 주력 러닝화 소모 게이지 카드 (추천 2)
-                    ShoeWearCardView {
-                        showShoeManagement = true
-                    }
-                    .padding(.horizontal)
                     
                     // 4. 최근 달리기 피드 섹션
                     VStack(alignment: .leading, spacing: 12) {
