@@ -266,6 +266,9 @@ struct SettingsView: View {
             } message: {
                 Text(syncResultMessage)
             }
+            .onChange(of: appTheme) { _, newTheme in
+                WidgetDataBridge.shared.updateTheme(newTheme)
+            }
         }
     }
     

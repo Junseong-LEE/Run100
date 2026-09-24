@@ -12,7 +12,16 @@ import WidgetKit
 struct MediumWidgetView: View {
     let data: WidgetSnapshotData
     
-    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorScheme) private var systemColorScheme
+    
+    // 앱 설정 테마("dark", "light", "system")와 위젯 테마 동기화
+    private var effectiveColorScheme: ColorScheme {
+        switch data.appTheme {
+        case "dark": return .dark
+        case "light": return .light
+        default: return systemColorScheme
+        }
+    }
     
     private var progressRatio: Double {
         guard data.targetKm > 0 else { return 0.0 }
@@ -38,7 +47,7 @@ struct MediumWidgetView: View {
                 // 배경 트랙 링
                 Circle()
                     .stroke(
-                        colorScheme == .dark ? Color.white.opacity(0.12) : Color(.systemGray5),
+                        effectiveColorScheme == .dark ? Color.white.opacity(0.12) : Color(.systemGray5),
                         style: StrokeStyle(lineWidth: 10.5, lineCap: .round)
                     )
                 
@@ -162,8 +171,13 @@ struct MediumWidgetView: View {
         }
         .padding(.horizontal, 13)
         .padding(.vertical, 10)
+        .environment(\.colorScheme, effectiveColorScheme)
         .containerBackground(for: .widget) {
-            Color(.secondarySystemBackground)
+            if effectiveColorScheme == .dark {
+                Color(red: 0.11, green: 0.11, blue: 0.12)
+            } else {
+                Color(uiColor: .secondarySystemGroupedBackground)
+            }
         }
     }
 }

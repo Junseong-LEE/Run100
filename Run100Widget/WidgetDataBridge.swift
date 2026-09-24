@@ -36,6 +36,9 @@ struct WidgetSnapshotData: Codable {
     var heartRateValueOnly: String = "-"
     var heartRateStatusMessage: String = "측정된 심박수 기록 없음"
     
+    // MARK: - 화면 테마 모드 ("dark", "light", "system")
+    var appTheme: String = "dark"
+    
     /// 위젯 갤러리 및 로드 실패 시 노출할 기본 플레이스홀더 데이터
     static var placeholder: WidgetSnapshotData {
         let sample7Days: [WidgetDayStatus] = [

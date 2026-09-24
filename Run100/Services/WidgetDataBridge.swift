@@ -36,6 +36,9 @@ struct WidgetSnapshotData: Codable {
     var heartRateValueOnly: String = "-"
     var heartRateStatusMessage: String = "측정된 심박수 기록 없음"
     
+    // MARK: - 화면 테마 모드 ("dark", "light", "system")
+    var appTheme: String = "dark"
+    
     /// 위젯 갤러리 및 로드 실패 시 노출할 기본 플레이스홀더 데이터
     static var placeholder: WidgetSnapshotData {
         let sample7Days: [WidgetDayStatus] = [
@@ -84,10 +87,11 @@ final class WidgetDataBridge {
     // MARK: - 스냅샷 저장 및 위젯 리로드
     
     /// 앱의 최신 진행 상황과 세션 데이터를 위젯 공유 저장소에 저장하고 위젯 타임라인 즉시 리로드
-    func updateSnapshot(from progress: MonthlyProgress, allSessions: [RunSession]) {
+    func updateSnapshot(from progress: MonthlyProgress, allSessions: [RunSession], appTheme: String? = nil) {
         let recent7Days = generateRecent7DaysData(from: allSessions)
+        let theme = appTheme ?? UserDefaults.standard.string(forKey: "appTheme") ?? "dark"
         
-        let snapshot = WidgetSnapshotData(
+        var snapshot = WidgetSnapshotData(
             targetKm: progress.targetKm,
             totalAccumulatedKm: progress.totalAccumulatedKm,
             remainingKm: progress.remainingKm,
@@ -103,6 +107,7 @@ final class WidgetDataBridge {
             heartRateValueOnly: progress.heartRateValueOnly,
             heartRateStatusMessage: progress.heartRateStatusMessage
         )
+        snapshot.appTheme = theme
         
         if let encoded = try? JSONEncoder().encode(snapshot) {
             sharedDefaults.set(encoded, forKey: snapshotKey)
@@ -111,6 +116,17 @@ final class WidgetDataBridge {
         }
         
         // 위젯 타임라인 즉시 새로고침 요청
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+    
+    /// 앱 테마 변경 시 위젯 타임라인 즉시 업데이트
+    func updateTheme(_ theme: String) {
+        var current = loadSnapshot()
+        current.appTheme = theme
+        if let encoded = try? JSONEncoder().encode(current) {
+            sharedDefaults.set(encoded, forKey: snapshotKey)
+            UserDefaults.standard.set(encoded, forKey: snapshotKey)
+        }
         WidgetCenter.shared.reloadAllTimelines()
     }
     
