@@ -27,7 +27,6 @@ struct SettingsView: View {
     @State private var syncResultMessage = ""
     @State private var showSyncResultAlert = false
     @State private var showReleaseNotes = false
-    @State private var showSampleLoadedAlert = false
     
     private let targetPresets: [Double] = [50.0, 100.0, 150.0]
     
@@ -174,22 +173,8 @@ struct SettingsView: View {
                         .font(.caption2)
                 }
                 
-                // 5. 데이터 관리 & 테스트 샘플 데이터
+                // 5. 데이터 관리
                 Section {
-                    Button {
-                        SampleData.insertSampleSessions(into: modelContext)
-                        UINotificationFeedbackGenerator().notificationOccurred(.success)
-                        showSampleLoadedAlert = true
-                    } label: {
-                        HStack {
-                            Text("테스트 샘플 데이터 채우기 (최근 4개월)")
-                                .foregroundStyle(Color.orange)
-                            Spacer()
-                            Image(systemName: "sparkles")
-                                .foregroundStyle(Color.orange)
-                        }
-                    }
-                    
                     Button(role: .destructive) {
                         showResetConfirmation = true
                     } label: {
@@ -204,7 +189,7 @@ struct SettingsView: View {
                 } header: {
                     Label("데이터 관리", systemImage: "cylinder.split.1x2.fill")
                 } footer: {
-                    Text("시뮬레이터나 테스트 시 최근 4개월(당월 112.5km 초과달성 + 과거 3개월 85k/72k/55k)의 샘플 데이터를 한 번에 채워볼 수 있습니다.")
+                    Text("저장된 모든 달리기 기록을 기기에서 영구적으로 삭제합니다.")
                         .font(.caption2)
                 }
                 
@@ -280,11 +265,6 @@ struct SettingsView: View {
                 Button("확인", role: .cancel) {}
             } message: {
                 Text(syncResultMessage)
-            }
-            .alert("샘플 데이터 생성 완료", isPresented: $showSampleLoadedAlert) {
-                Button("확인", role: .cancel) {}
-            } message: {
-                Text("최근 4개월간의 러닝 데이터(당월 112.5km 초과달성 포함)가 생성되었습니다. 대시보드와 캘린더에서 확인해보세요!")
             }
         }
     }
