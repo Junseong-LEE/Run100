@@ -515,4 +515,22 @@ Run100 앱의 개발 진행 상황, 주요 기능 구현, 아키텍처 결정 �
 7. **차기 로드맵 확정: Step 7 Firebase 인프라 및 운영 자동화 계획 수립 (`README.md`)**
    - 사용자 경험을 해치지 않는 비침습적 운영 도구(Crashlytics 버그 추적, Analytics 익명 통계, Remote Config 원격 설정/공지, FCM 동적 푸시) 연동 마일스톤 확정.
 
+---
+
+## [v1.3.1] - 2026-09-24 : Firebase 인프라 & 실시간 원격 운영 시스템 연동 완료 🚀🔥
+
+### 🎯 주요 변경 사항
+1. **Firebase SPM 패키지 연결 (`firebase-ios-sdk 11.15.0`)**
+   - `FirebaseAnalytics`, `FirebaseCrashlytics`, `FirebaseRemoteConfig`, `FirebaseMessaging` 프레임워크 타깃 연동.
+   - `GoogleService-Info.plist` 동적 번들 복사 구성 완료.
+2. **통합 관리 서비스 구축 (`FirebaseManager.swift`)**
+   - **에러 및 크래시 추적 (Crashlytics)**: 앱 크래시 자동 감지 및 세션 로그 수집.
+   - **비식별 사용자 분석 (Analytics)**: 앱 실행, 러닝 기록 저장, 러닝화 등록 등 주요 마일스톤 익명 분석 로깅.
+   - **원격 구성 및 공지 제어 (Remote Config)**: 앱 재배포 없는 긴급 점검 공지 팝업(`announcement_active`, `announcement_message`) 및 동기부여 문구 실시간 제어.
+   - **원격 푸시 알림 (Messaging - FCM)**: APNs 디바이스 토큰 및 FCM 등록 토큰 자동 수신 대리자 연동.
+3. **런칭 타이밍 이슈 해결 및 안정성 검증 (`Run100App.swift`, `FirebaseManager.swift`)**
+   - `RemoteConfig` 초기화 시점이 `FirebaseApp.configure()`보다 앞서 발생하는 `FIRAppNotConfigured` 결함을 옵셔널 지연 초기화로 완벽 해결.
+   - 14개 핵심 단위 테스트 100% 통과 (`** TEST SUCCEEDED **`).
+
+
 

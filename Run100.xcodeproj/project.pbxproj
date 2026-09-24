@@ -10,6 +10,10 @@
 		C69B8CF1305FA89800FE4946 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C69B8CF0305FA89800FE4946 /* WidgetKit.framework */; };
 		C69B8CF3305FA89800FE4946 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C69B8CF2305FA89800FE4946 /* SwiftUI.framework */; };
 		C69B8D00305FA89900FE4946 /* Run100WidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C69B8CEE305FA89800FE4946 /* Run100WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		FB000012305E158000E93276 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = FB000002305E158000E93276 /* FirebaseAnalytics */; };
+		FB000013305E158000E93276 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = FB000003305E158000E93276 /* FirebaseCrashlytics */; };
+		FB000014305E158000E93276 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = FB000004305E158000E93276 /* FirebaseRemoteConfig */; };
+		FB000015305E158000E93276 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FB000005305E158000E93276 /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +113,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB000012305E158000E93276 /* FirebaseAnalytics in Frameworks */,
+				FB000013305E158000E93276 /* FirebaseCrashlytics in Frameworks */,
+				FB000014305E158000E93276 /* FirebaseRemoteConfig in Frameworks */,
+				FB000015305E158000E93276 /* FirebaseMessaging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +213,10 @@
 			);
 			name = Run100;
 			packageProductDependencies = (
+				FB000002305E158000E93276 /* FirebaseAnalytics */,
+				FB000003305E158000E93276 /* FirebaseCrashlytics */,
+				FB000004305E158000E93276 /* FirebaseRemoteConfig */,
+				FB000005305E158000E93276 /* FirebaseMessaging */,
 			);
 			productName = Run100;
 			productReference = C6E237D9305E158000E93276 /* Run100.app */;
@@ -296,6 +308,9 @@
 			);
 			mainGroup = C6E237D0305E158000E93276;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FB000001305E158000E93276 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C6E237DA305E158000E93276 /* Products */;
 			projectDirPath = "";
@@ -780,6 +795,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FB000001305E158000E93276 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FB000002305E158000E93276 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB000001305E158000E93276 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		FB000003305E158000E93276 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB000001305E158000E93276 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		FB000004305E158000E93276 /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB000001305E158000E93276 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
+		};
+		FB000005305E158000E93276 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB000001305E158000E93276 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C6E237D1305E158000E93276 /* Project object */;
 }
