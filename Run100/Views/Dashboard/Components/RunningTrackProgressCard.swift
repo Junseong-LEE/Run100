@@ -28,10 +28,7 @@ struct RunningTrackProgressCard: View {
         .padding(18)
         .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(progress.isGoalAchieved ? Color.orange.opacity(0.35) : Color(.separator).opacity(0.3), lineWidth: 1)
-        )
+        .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 4)
     }
     
     // MARK: - 1. 트랙 헤더
