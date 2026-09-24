@@ -253,25 +253,6 @@ struct DayDetailCardView: View {
                                     Spacer()
                                     
                                     Menu {
-                                        Button {
-                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                            session.shoeId = nil
-                                            try? modelContext.save()
-                                        } label: {
-                                            HStack {
-                                                if let active = activeShoe {
-                                                    Text("기본 주력 (\(active.name))")
-                                                } else {
-                                                    Text("기본 신발")
-                                                }
-                                                if session.shoeId == nil {
-                                                    Image(systemName: "checkmark")
-                                                }
-                                            }
-                                        }
-                                        
-                                        Divider()
-                                        
                                         ForEach(allShoes) { shoe in
                                             Button {
                                                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -279,8 +260,8 @@ struct DayDetailCardView: View {
                                                 try? modelContext.save()
                                             } label: {
                                                 HStack {
-                                                    Text(shoe.name)
-                                                    if session.shoeId == shoe.id {
+                                                    Text(shoe.isActive ? "\(shoe.name) (주력)" : shoe.name)
+                                                    if (session.shoeId == shoe.id) || (session.shoeId == nil && shoe.isActive) {
                                                         Image(systemName: "checkmark")
                                                     }
                                                 }

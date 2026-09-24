@@ -134,32 +134,14 @@ struct QuickAddModalView: View {
                             Spacer()
                             
                             Menu {
-                                Button {
-                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                    selectedShoeId = nil
-                                } label: {
-                                    HStack {
-                                        if let active = activeShoe {
-                                            Text("기본 주력 (\(active.name))")
-                                        } else {
-                                            Text("기본 신발")
-                                        }
-                                        if selectedShoeId == nil {
-                                            Image(systemName: "checkmark")
-                                        }
-                                    }
-                                }
-                                
-                                Divider()
-                                
                                 ForEach(allShoes) { shoe in
                                     Button {
                                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                         selectedShoeId = shoe.id
                                     } label: {
                                         HStack {
-                                            Text(shoe.name)
-                                            if selectedShoeId == shoe.id {
+                                            Text(shoe.isActive ? "\(shoe.name) (주력)" : shoe.name)
+                                            if selectedShoeId == shoe.id || (selectedShoeId == nil && shoe.isActive) {
                                                 Image(systemName: "checkmark")
                                             }
                                         }
