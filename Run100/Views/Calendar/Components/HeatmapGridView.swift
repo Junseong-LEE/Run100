@@ -168,7 +168,7 @@ struct HeatmapGridView: View {
             .id("\(year)-\(month)") // 연/월 변경 시 전체 그리드를 새롭게 리빌드
         }
         .padding(18)
-        .background(Color(.secondarySystemBackground))
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 3)
     }

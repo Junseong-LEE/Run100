@@ -26,7 +26,7 @@ struct RunningTrackProgressCard: View {
             trackFooterView
         }
         .padding(18)
-        .background(Color(.secondarySystemBackground))
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 22, style: .continuous)

@@ -123,7 +123,7 @@ struct HeroDashboardCard: View {
             }
         }
         .padding(18)
-        .background(Color(.secondarySystemBackground))
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 4)
     }

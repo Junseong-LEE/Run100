@@ -153,7 +153,7 @@ struct DashboardView: View {
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
-                        .background(Color(.secondarySystemBackground))
+                        .background(Color(uiColor: .secondarySystemGroupedBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -210,7 +210,7 @@ struct DashboardView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 28)
-                            .background(Color(.secondarySystemBackground))
+                            .background(Color(uiColor: .secondarySystemGroupedBackground))
                             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                             .padding(.horizontal)
                         } else {
@@ -241,6 +241,7 @@ struct DashboardView: View {
             }
             .navigationBarHidden(true)
             .toolbar(.hidden, for: .navigationBar)
+            .background(Color(uiColor: .systemGroupedBackground))
             .sheet(item: $sessionToEdit) { session in
                 QuickAddModalView(sessionToEdit: session) {
                     WidgetDataBridge.shared.updateSnapshot(from: progress, allSessions: allSessions)

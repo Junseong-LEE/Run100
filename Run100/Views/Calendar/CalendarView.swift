@@ -221,6 +221,7 @@ struct CalendarView: View {
             }
             .navigationBarHidden(true)
             .toolbar(.hidden, for: .navigationBar)
+            .background(Color(uiColor: .systemGroupedBackground))
             .sheet(item: $sessionToEdit) { session in
                 QuickAddModalView(sessionToEdit: session) {
                     WidgetDataBridge.shared.updateSnapshot(from: progress, allSessions: allSessions)
@@ -283,7 +284,7 @@ private struct StatCard: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 38)
-        .background(Color(.secondarySystemBackground))
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(label ?? "") \(value)")

@@ -88,7 +88,7 @@ struct RecentRunRowView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color(.secondarySystemBackground))
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         // 수기 입력 데이터인 경우 꾹 눌렀을 때(롱프레스) 수정 및 삭제 팝업 메뉴 노출

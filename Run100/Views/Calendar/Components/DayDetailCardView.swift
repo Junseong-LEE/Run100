@@ -257,7 +257,7 @@ struct DayDetailCardView: View {
             .padding(.top, 2)
         }
         .padding(18)
-        .background(Color(.secondarySystemBackground))
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .shadow(color: Color.black.opacity(0.03), radius: 8, x: 0, y: 3)
     }
