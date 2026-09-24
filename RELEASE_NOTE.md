@@ -512,4 +512,7 @@ Run100 앱의 개발 진행 상황, 주요 기능 구현, 아키텍처 결정 �
 6. **설정 화면 릴리즈 노트 모달 최신화 및 앱 버전 동기화 (`ReleaseNotesModalView.swift`, `SettingsView.swift`, `project.pbxproj`)**
    - **릴리즈 노트 모달(`ReleaseNotesModalView.swift`) 최신화**: v1.3.0(러닝화 트래킹 & 로테이션 지원) 및 v1.2.2(거리×페이스 산점도 차트 & Apple Grouped 디자인 시스템 통일) 상세 변경 내역을 팝업 시트에 반영.
    - **앱 버전 및 빌드 설정 동기화**: Xcode `MARKETING_VERSION`을 `1.3.0`으로 상향하고 `SettingsView`의 앱 버전 표기를 `v1.3.0 (1)`로 완벽 동기화.
+7. **차기 로드맵 확정: Step 7 Firebase 인프라 및 운영 자동화 계획 수립 (`README.md`)**
+   - 사용자 경험을 해치지 않는 비침습적 운영 도구(Crashlytics 버그 추적, Analytics 익명 통계, Remote Config 원격 설정/공지, FCM 동적 푸시) 연동 마일스톤 확정.
+
 

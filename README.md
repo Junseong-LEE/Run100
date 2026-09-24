@@ -416,3 +416,15 @@ final class RunningShoe {
   - [x] App Group / 공유 데이터 브리지(`WidgetDataBridge`) 구축
   - [x] Medium 위젯 뷰 (원형 링 + 최근 7일 잔디 스트립 + 권장 거리 코칭) 구현
   - [x] 앱 내 기록 추가/동기화 시 `WidgetCenter.shared.reloadAllTimelines()` 실시간 연동
+- [x] **Step 6: Multi-Dimensional History & Gear Tracker (v1.1 ~ v1.3)**
+  - [x] 4대 지표(거리/페이스/심박/출석) 다차원 히스토리 분석 탭 신설
+  - [x] 1~4번 레인 육상 스타디움 트랙 & 과거의 나와 고스트 레이스
+  - [x] 캘린더 거리 × 페이스 2차원 산점도 차트 및 Apple Grouped 디자인 시스템 통일
+  - [x] 러닝화 수명 및 소모량 트래킹(Gear Tracker) & 2켤레 이상 로테이션 지원
+- [ ] **Step 7: Firebase 인프라 및 원격 운영 시스템 (운영 안정성 & 사용자 분석)**
+  - [ ] Firebase SDK(SPM) 프로젝트 연동 및 `GoogleService-Info.plist` 초기화
+  - [ ] **앱 크래시 및 에러 트래킹 (Crashlytics)**: 실시간 비정상 종료 감지 및 코드 라인 단위 크래시 로그 수집 환경 구축
+  - [ ] **익명 사용자 행동 패턴 분석 (Analytics)**: 목표 거리 분포, 신발 등록율, 화면 전환 등 비식별 사용 통계 측정
+  - [ ] **실시간 원격 구성 및 공지 제어 (Remote Config)**: 앱 재배포 없는 시즌별 동기부여 문구 변경, 점검 안내 및 설정값 실시간 조정
+  - [ ] **동적 원격 푸시 알림 (Cloud Messaging - FCM)**: 월말 마감 D-Day 리마인더 및 러닝 독려 타깃 푸시 파이프라인 구축
+  - *(참고: 익명 랭킹 및 클라우드 DB 데이터 연동은 추후 서비스 확장 시 도입 재검토)*
