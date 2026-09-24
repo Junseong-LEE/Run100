@@ -70,30 +70,38 @@ struct DailyDistanceChartView: View {
         monthlyPoints.filter { $0.day == selectedDay }
     }
     
-    // X축 (거리) 범위: 최소 0km, 최대치는 데이터 기반 (최소 10km 보장)
+    // X축 (거리) 범위: 5km 단위 올림 (최소 10km 보장)
     private var maxXKm: Double {
         let maxDist = monthlyPoints.map(\.distanceKm).max() ?? 0.0
-        return max(ceil(maxDist * 1.15), 10.0)
+        let rounded5k = ceil((maxDist * 1.08) / 5.0) * 5.0
+        return max(rounded5k, 10.0)
     }
     
-    // Y축 (페이스) 범위: 위쪽(빠름 = 초가 작음), 아래쪽(느림 = 초가 큼)
-    // 기본 가드: 4'30"(270초) ~ 7'30"(450초)
-    private var paceDomain: (fastest: Double, slowest: Double) {
+    // Y축 (페이스) 범위: 30초 단위(5:00, 5:30 등)로 정밀 스냅
+    private var paceDomain: (fastest: Double, slowest: Double, ticks: [Double]) {
         let paces = monthlyPoints.map(\.paceSeconds)
-        guard !paces.isEmpty else {
-            return (fastest: 270.0, slowest: 450.0)
-        }
-        let minPace = paces.min() ?? 270.0
-        let maxPace = paces.max() ?? 450.0
+        let rawFastest = paces.min() ?? 300.0 // 기본 5:00
+        let rawSlowest = paces.max() ?? 420.0 // 기본 7:00
         
-        // 여유 버퍼 20초 부여
-        let fast = max(minPace - 20.0, 180.0) // 3분 이상
-        let slow = min(maxPace + 20.0, 720.0) // 12분 이하
-        let diff = slow - fast
-        if diff < 60 {
-            return (fastest: fast - 30, slowest: slow + 30)
+        // 30초 단위로 내림(fastest) 및 올림(slowest)
+        var fast = floor(rawFastest / 30.0) * 30.0
+        var slow = ceil(rawSlowest / 30.0) * 30.0
+        
+        // 최소 60초(30초 간격 2개) 간격 보장
+        if slow - fast < 60.0 {
+            fast = max(fast - 30.0, 180.0) // 3분 이상
+            slow = min(slow + 30.0, 720.0) // 12분 이하
         }
-        return (fastest: fast, slowest: slow)
+        
+        // 30초 단위 틱 목록 생성 (상단 느린 페이스 -> 하단 빠른 페이스)
+        var ticks: [Double] = []
+        var p = slow
+        while p >= fast - 0.1 {
+            ticks.append(p)
+            p -= 30.0
+        }
+        
+        return (fastest: fast, slowest: slow, ticks: ticks)
     }
     
     var body: some View {
@@ -217,19 +225,22 @@ struct DailyDistanceChartView: View {
     // MARK: - 산점도 코어 뷰
     private var scatterPlotView: some View {
         GeometryReader { proxy in
-            let plotWidth = proxy.size.width - 34 // Y축 라벨 여백 34pt
+            let plotWidth = proxy.size.width - 36 // Y축 라벨 여백 36pt
             let plotHeight = proxy.size.height - 18 // X축 라벨 여백 18pt
             let domain = paceDomain
             let paceSpan = max(domain.slowest - domain.fastest, 1.0)
             
             ZStack(alignment: .topLeading) {
-                // 1) 배경 가이드 그리드 & Y축 라벨
+                // 1) X축 1km 단위 수직 보조선 그리드
+                xAxisVerticalGrids(plotWidth: plotWidth, plotHeight: plotHeight)
+                
+                // 2) Y축 30초 단위 수평 가이드선 & 페이스 라벨
                 yAxisAndGrid(plotWidth: plotWidth, plotHeight: plotHeight, domain: domain)
                 
-                // 2) 하단 X축 거리 눈금 라벨
+                // 3) 하단 X축 거리 눈금 라벨
                 xAxisLabels(plotWidth: plotWidth, plotHeight: plotHeight)
                 
-                // 3) 산점도 데이터 포인트 렌더링
+                // 4) 산점도 데이터 포인트 렌더링
                 ForEach(monthlyPoints) { point in
                     let isSelected = (point.day == selectedDay)
                     let (xPos, yPos) = calculatePosition(
@@ -252,58 +263,90 @@ struct DailyDistanceChartView: View {
                 }
             }
         }
-        .frame(height: 126)
+        .frame(height: 136)
     }
     
-    // MARK: - Y축 및 수평 가이드선 (페이스가 높을수록 상단)
+    // MARK: - X축 1km 단위 수직 보조선
     @ViewBuilder
-    private func yAxisAndGrid(plotWidth: CGFloat, plotHeight: CGFloat, domain: (fastest: Double, slowest: Double)) -> some View {
-        let midPaceSec = (domain.fastest + domain.slowest) / 2
+    private func xAxisVerticalGrids(plotWidth: CGFloat, plotHeight: CGFloat) -> some View {
+        let maxKmInt = max(Int(maxXKm), 1)
         
-        VStack(spacing: 0) {
-            // 상단: 가장 높은 페이스 라인 (예: 7'30")
-            gridRow(paceSec: domain.slowest, width: plotWidth, isTop: true)
-            Spacer()
-            // 중간: 평균 페이스 라인 (예: 6'00")
-            gridRow(paceSec: midPaceSec, width: plotWidth, isTop: false)
-            Spacer()
-            // 하단: 가장 낮은 페이스 라인 (예: 4'30")
-            gridRow(paceSec: domain.fastest, width: plotWidth, isTop: false)
-        }
-        .frame(width: plotWidth + 34, height: plotHeight, alignment: .leading)
-    }
-    
-    private func gridRow(paceSec: Double, width: CGFloat, isTop: Bool) -> some View {
-        HStack(spacing: 4) {
-            Text(formatPaceLabel(paceSec))
-                .font(.system(size: 8, weight: .medium, design: .rounded))
-                .foregroundStyle(Color.secondary.opacity(0.65))
-                .frame(width: 30, alignment: .trailing)
-            
-            Line()
-                .stroke(style: StrokeStyle(lineWidth: 0.5, dash: isTop ? [] : [2, 3]))
-                .foregroundStyle(Color.secondary.opacity(0.2))
-                .frame(width: width, height: 1)
-        }
-        .frame(height: 14)
-    }
-    
-    // MARK: - X축 눈금 라벨 (거리)
-    private func xAxisLabels(plotWidth: CGFloat, plotHeight: CGFloat) -> some View {
-        let ticks: [Double] = [0.0, maxXKm * 0.5, maxXKm]
-        return HStack(spacing: 0) {
-            Spacer().frame(width: 34) // Y축 라벨 여백
-            
-            ForEach(Array(ticks.enumerated()), id: \.offset) { index, dist in
-                let label = String(format: "%.0fkm", dist)
-                Text(label)
-                    .font(.system(size: 8, weight: .medium, design: .rounded))
-                    .foregroundStyle(Color.secondary.opacity(0.6))
-                    .frame(maxWidth: .infinity, alignment: index == 0 ? .leading : (index == ticks.count - 1 ? .trailing : .center))
+        ZStack(alignment: .topLeading) {
+            ForEach(1...maxKmInt, id: \.self) { km in
+                let xRatio = CGFloat(Double(km) / maxXKm)
+                let xPos = 36 + (xRatio * (plotWidth - 12)) + 6
+                let isMajor = (km % 5 == 0)
+                
+                VerticalLine()
+                    .stroke(
+                        style: StrokeStyle(
+                            lineWidth: isMajor ? 0.65 : 0.4,
+                            dash: isMajor ? [3, 3] : [1.5, 3]
+                        )
+                    )
+                    .foregroundStyle(isMajor ? Color.secondary.opacity(0.25) : Color.secondary.opacity(0.12))
+                    .frame(width: 1, height: plotHeight)
+                    .position(x: xPos, y: plotHeight / 2)
             }
         }
-        .frame(width: plotWidth + 34)
-        .offset(y: plotHeight + 4)
+    }
+    
+    // MARK: - Y축 및 수평 가이드선 (30초 단위 틱, 페이스가 높을수록 상단)
+    @ViewBuilder
+    private func yAxisAndGrid(plotWidth: CGFloat, plotHeight: CGFloat, domain: (fastest: Double, slowest: Double, ticks: [Double])) -> some View {
+        let paceSpan = max(domain.slowest - domain.fastest, 1.0)
+        
+        ZStack(alignment: .topLeading) {
+            ForEach(domain.ticks, id: \.self) { pace in
+                let yRatio = CGFloat((domain.slowest - pace) / paceSpan)
+                let yPos = (yRatio * (plotHeight - 14)) + 7 // 중심선 정렬
+                let isBoundary = (pace == domain.fastest || pace == domain.slowest)
+                
+                HStack(spacing: 4) {
+                    Text(formatPaceLabel(pace))
+                        .font(.system(size: 8.5, weight: isBoundary ? .bold : .medium, design: .rounded))
+                        .foregroundStyle(Color.secondary.opacity(isBoundary ? 0.8 : 0.6))
+                        .frame(width: 32, alignment: .trailing)
+                    
+                    Line()
+                        .stroke(
+                            style: StrokeStyle(
+                                lineWidth: isBoundary ? 0.65 : 0.4,
+                                dash: isBoundary ? [] : [2, 3]
+                            )
+                        )
+                        .foregroundStyle(isBoundary ? Color.secondary.opacity(0.25) : Color.secondary.opacity(0.15))
+                        .frame(width: plotWidth, height: 1)
+                }
+                .position(x: (plotWidth + 36) / 2, y: yPos)
+            }
+        }
+        .frame(width: plotWidth + 36, height: plotHeight)
+    }
+    
+    // MARK: - X축 눈금 라벨 (거리: 0km, 5km, 10km...)
+    private func xAxisLabels(plotWidth: CGFloat, plotHeight: CGFloat) -> some View {
+        let step = maxXKm <= 15.0 ? 5.0 : 10.0
+        var ticks: [Double] = [0.0]
+        var current = step
+        while current <= maxXKm + 0.1 {
+            ticks.append(current)
+            current += step
+        }
+        
+        return ZStack(alignment: .leading) {
+            ForEach(ticks, id: \.self) { dist in
+                let xRatio = CGFloat(dist / maxXKm)
+                let xPos = 36 + (xRatio * (plotWidth - 12)) + 6
+                let label = String(format: "%.0fk", dist)
+                
+                Text(label)
+                    .font(.system(size: 8.5, weight: .semibold, design: .rounded))
+                    .foregroundStyle(Color.secondary.opacity(0.7))
+                    .position(x: xPos, y: plotHeight + 9)
+            }
+        }
+        .frame(width: plotWidth + 36, height: 16)
     }
     
     // MARK: - 좌표 계산 (X: 거리, Y: 페이스 수치가 높을수록 위쪽)
@@ -311,17 +354,17 @@ struct DailyDistanceChartView: View {
         point: ScatterPoint,
         plotWidth: CGFloat,
         plotHeight: CGFloat,
-        domain: (fastest: Double, slowest: Double),
+        domain: (fastest: Double, slowest: Double, ticks: [Double]),
         paceSpan: Double
     ) -> (x: CGFloat, y: CGFloat) {
         // X축: 0km -> maxXKm
         let xRatio = CGFloat(min(max(point.distanceKm / maxXKm, 0.0), 1.0))
-        let xPos = 34 + (xRatio * (plotWidth - 12)) + 6 // Y축 라벨 오프셋(34) + 여백 6
+        let xPos = 36 + (xRatio * (plotWidth - 12)) + 6
         
         // Y축: 페이스가 높을수록(domain.slowest) 위쪽(yRatio = 0.0), 페이스가 낮을수록(domain.fastest) 아래쪽(yRatio = 1.0)
         let paceClamped = min(max(point.paceSeconds, domain.fastest), domain.slowest)
         let yRatio = CGFloat((domain.slowest - paceClamped) / paceSpan)
-        let yPos = (yRatio * (plotHeight - 14)) + 7 // gridRow 중심(7pt)에 정밀 일치
+        let yPos = (yRatio * (plotHeight - 14)) + 7 // 가이드라인 중심선과 완벽 일치
         
         return (xPos, yPos)
     }
@@ -340,7 +383,7 @@ struct DailyDistanceChartView: View {
     private func formatPaceLabel(_ paceSec: Double) -> String {
         let m = Int(paceSec) / 60
         let s = Int(paceSec) % 60
-        return String(format: "%d'%02d\"", m, s)
+        return String(format: "%d:%02d", m, s)
     }
 }
 
@@ -405,6 +448,16 @@ private struct Line: Shape {
         var path = Path()
         path.move(to: CGPoint(x: 0, y: rect.midY))
         path.addLine(to: CGPoint(x: rect.width, y: rect.midY))
+        return path
+    }
+}
+
+// MARK: - 수직선 서포트 (1km 보조선)
+private struct VerticalLine: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: 0))
+        path.addLine(to: CGPoint(x: rect.midX, y: rect.height))
         return path
     }
 }
