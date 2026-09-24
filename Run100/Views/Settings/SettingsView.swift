@@ -37,7 +37,7 @@ struct SettingsView: View {
     
     /// 앱의 번들 버전 동적 로드 (예: "v1.2.0")
     private var appVersionString: String {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.2.0"
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.3.0"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
         return "v\(version) (\(build))"
     }
