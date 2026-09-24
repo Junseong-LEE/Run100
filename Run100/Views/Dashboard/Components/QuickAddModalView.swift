@@ -13,15 +13,32 @@ struct QuickAddModalView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     
+    @Query private var allShoes: [RunningShoe]
+    
     var sessionToEdit: RunSession? = nil
     var onSaved: (() -> Void)? = nil
     
     @State private var distanceKmText: String = "5.0"
     @State private var memo: String = ""
     @State private var durationMinutesText: String = ""
+    @State private var selectedShoeId: UUID? = nil
     
     private var isEditing: Bool {
         sessionToEdit != nil
+    }
+    
+    private var activeShoe: RunningShoe? {
+        allShoes.first(where: { $0.isActive && !$0.isRetired })
+    }
+    
+    private var selectedShoeName: String {
+        if let id = selectedShoeId, let shoe = allShoes.first(where: { $0.id == id }) {
+            return shoe.name
+        }
+        if let active = activeShoe {
+            return "기본 (\(active.name))"
+        }
+        return "선택 안 함"
     }
     
     private let quickChips: [Double] = [3.0, 5.0, 7.0, 10.0]
@@ -102,6 +119,71 @@ struct QuickAddModalView: View {
                     .padding(14)
                     .background(Color(.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    
+                    // 착용 신발 선택기 (로테이션 지원)
+                    if !allShoes.isEmpty {
+                        HStack(spacing: 12) {
+                            Image(systemName: "shoe.2.fill")
+                                .foregroundStyle(Color.orange)
+                                .frame(width: 20)
+                            
+                            Text("착용 신발")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(.primary)
+                            
+                            Spacer()
+                            
+                            Menu {
+                                Button {
+                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                    selectedShoeId = nil
+                                } label: {
+                                    HStack {
+                                        if let active = activeShoe {
+                                            Text("기본 주력 (\(active.name))")
+                                        } else {
+                                            Text("기본 신발")
+                                        }
+                                        if selectedShoeId == nil {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                                
+                                Divider()
+                                
+                                ForEach(allShoes) { shoe in
+                                    Button {
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                        selectedShoeId = shoe.id
+                                    } label: {
+                                        HStack {
+                                            Text(shoe.name)
+                                            if selectedShoeId == shoe.id {
+                                                Image(systemName: "checkmark")
+                                            }
+                                        }
+                                    }
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Text(selectedShoeName)
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .foregroundStyle(Color.orange)
+                                    Image(systemName: "chevron.up.chevron.down")
+                                        .font(.system(size: 9, weight: .bold))
+                                        .foregroundStyle(Color.orange.opacity(0.8))
+                                }
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 6)
+                                .background(Color.orange.opacity(0.12))
+                                .clipShape(Capsule())
+                            }
+                        }
+                        .padding(14)
+                        .background(Color(.secondarySystemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
                 }
                 .padding(.horizontal)
                 
@@ -148,9 +230,12 @@ struct QuickAddModalView: View {
                 if let session = sessionToEdit {
                     distanceKmText = String(format: "%.1f", session.distanceKm)
                     memo = session.memo ?? ""
+                    selectedShoeId = session.shoeId
                     if session.durationSeconds > 0 {
                         durationMinutesText = "\(Int(session.durationSeconds / 60))"
                     }
+                } else {
+                    selectedShoeId = activeShoe?.id
                 }
             }
         }
@@ -167,6 +252,7 @@ struct QuickAddModalView: View {
             session.distanceKm = km
             session.durationSeconds = seconds
             session.memo = memo.isEmpty ? nil : memo
+            session.shoeId = selectedShoeId
             try? modelContext.save()
         } else {
             // 신규 세션 추가
@@ -176,7 +262,8 @@ struct QuickAddModalView: View {
                 durationSeconds: seconds,
                 memo: memo.isEmpty ? nil : memo,
                 isManual: true,
-                source: "Manual"
+                source: "Manual",
+                shoeId: selectedShoeId
             )
             modelContext.insert(newSession)
             try? modelContext.save()

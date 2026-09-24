@@ -90,8 +90,9 @@ final class RunSession {
     var memo: String?               // 메모/코스명 (예: 한강 탄천 러닝)
     var isManual: Bool              // 수동 입력 여부 (false: HealthKit 동기화)
     var source: String              // "AppleHealth", "Garmin", "Manual"
+    var shoeId: UUID?               // 착용 러닝화 ID (로테이션 지원)
     
-    init(distanceKm: Double, date: Date = Date(), durationSeconds: TimeInterval = 0, memo: String? = nil, isManual: Bool = true, source: String = "Manual") {
+    init(distanceKm: Double, date: Date = Date(), durationSeconds: TimeInterval = 0, memo: String? = nil, isManual: Bool = true, source: String = "Manual", shoeId: UUID? = nil) {
         self.id = UUID()
         self.distanceKm = distanceKm
         self.date = date
@@ -99,6 +100,7 @@ final class RunSession {
         self.memo = memo
         self.isManual = isManual
         self.source = source
+        self.shoeId = shoeId
     }
 }
 ```
@@ -265,6 +267,9 @@ final class RunningShoe {
   - **[v1.0.8] 5대 핵심 지표 중심의 세션 카드 개편**:
     - 불필요한 기기명(예: "이준성의 Apple watch 러닝") 및 출처 라벨("애플건강", "수기 직접 입력") 완전 제거.
     - **달리기 시간(시작 시각, 예: `오전 7:30`)**, **달린 시간(예: `32분 40초`)**, **거리(예: `5.2 km`)**, **페이스(예: `5:30/km`)**, **심박수(예: `152 bpm`)** 5대 러닝 핵심 지표 위주로 정돈.
+  - **[v1.3.2] 착용 러닝화 로테이션 원터치 변경 메뉴**:
+    - 세션 카드 하단에 `👟 착용 신발 [ 나이키 페가수스 41 ▾ ]` 메뉴를 배치하여, 여러 신발을 번갈아 신는 로테이션 러너가 1초 만에 해당 세션의 착용 신발을 변경 가능.
+    - 기본값은 현재 주력 신발로 자동 매핑되어 번거로움이 없으며, 변경 시 각 신발의 누적 마일리지와 소모율이 실시간으로 정밀 재계산됨.
   - **[v1.0.1] 당일 수기 세션 롱프레스 수정/삭제 지원**: 상세 카드 내의 수기 세션 항목을 꾹 눌러 즉시 수정 및 삭제 가능.
 - 기록이 없는 날짜의 경우 *"충분한 휴식으로 회복했어요 🧘"* 안내 카드 노출.
 
@@ -338,7 +343,7 @@ final class RunningShoe {
     - `템포 / 스피드 훈련화`: 기본 **500km** 자동 세팅 (경량 훈련용)
     - `카본 레이싱화`: 기본 **300km** 자동 세팅 (초경량 대회용)
     - 사용자가 200~1,000km 범위에서 슬라이더로 자유롭게 직접 조정 가능.
-  - **착용 시작일 기준 완전 자동 누적**: 매 세션마다 신발을 고르는 번거로움 없이, 착용 시작일 이후의 모든 러닝 세션(애플 건강 + 수기) 거리가 자동으로 합산 트래킹.
+  - **착용 시작일 기준 완전 자동 누적 & 로테이션 지원**: 매 세션마다 신발을 고르는 번거로움 없이 현재 주력 신발로 자동 누적되며, 2켤레 이상을 번갈아 신는 로테이션 러너는 세션 상세 카드나 수동 입력 창에서 1초 만에 착용 신발을 변경하여 각 신발별 마일리지를 독립적으로 정밀 집계.
   - **4단계 수명 상태 모니터링**: 🟢 `최상 (0~60%)`, 🟡 `적정 (61~85%)`, 🟠 `교체 준비 (86~100%)`, 🔴 `수명 완료 (100% 초과)`.
   - **은퇴 보관함(명예의 전당)**: 새 신발 교체 시 이전 신발의 최종 누적 주행 거리를 확정 보관하고 히스토리 관리.
 - **[기능 F-402] 화면 테마 모드 선택**:

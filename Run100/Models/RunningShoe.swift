@@ -128,16 +128,22 @@ final class RunningShoe {
         set { shoeTypeRaw = newValue.rawValue }
     }
     
-    /// 세션 기록들을 기반으로 총 누적 거리 계산
+    /// 세션 기록들을 기반으로 총 누적 거리 계산 (러닝화 로테이션 정밀 지원)
     func calculateTotalDistance(from sessions: [RunSession]) -> Double {
         if isRetired, let fixed = retiredTotalDistanceKm {
             return fixed
         }
         
         let startOfDay = Calendar.current.startOfDay(for: startDate)
-        let sessionDistance = sessions
-            .filter { $0.date >= startOfDay }
-            .reduce(0.0) { $0 + $1.distanceKm }
+        let sessionDistance = sessions.filter { session in
+            if let assignedId = session.shoeId {
+                // 특정 신발이 지정된 세션 -> 해당 신발 ID와 일치할 때만 누적
+                return assignedId == self.id
+            } else {
+                // 신발이 별도 지정되지 않은 세션 -> 현재 주력 신발이고 착용 시작일 이후일 때 자동 누적
+                return self.isActive && session.date >= startOfDay
+            }
+        }.reduce(0.0) { $0 + $1.distanceKm }
         
         return initialDistanceKm + sessionDistance
     }

@@ -19,6 +19,7 @@ final class RunSession {
     var isManual: Bool               // 수동 입력 여부 (false: HealthKit 동기화)
     var source: String               // 데이터 출처 ("Manual", "AppleHealth", "Garmin" 등)
     var averageHeartRate: Int?       // 평균 심박수 (bpm)
+    var shoeId: UUID?                // 착용 러닝화 ID (nil: 기본 주력 신발 자동 계산 또는 미지정)
     
     init(
         id: UUID = UUID(),
@@ -28,7 +29,8 @@ final class RunSession {
         memo: String? = nil,
         isManual: Bool = true,
         source: String = "Manual",
-        averageHeartRate: Int? = nil
+        averageHeartRate: Int? = nil,
+        shoeId: UUID? = nil
     ) {
         self.id = id
         self.distanceKm = distanceKm
@@ -38,6 +40,7 @@ final class RunSession {
         self.isManual = isManual
         self.source = source
         self.averageHeartRate = averageHeartRate
+        self.shoeId = shoeId
     }
     
     /// 단일 세션의 평균 페이스 문자열 (예: "5:32/km")

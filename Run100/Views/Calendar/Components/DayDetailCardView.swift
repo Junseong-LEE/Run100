@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
-/// 선택한 날짜의 달리기 상세 내역 카드 (소요 시간, 메모, 세션 정보)
+/// 선택한 날짜의 달리기 상세 내역 카드 (소요 시간, 메모, 세션 정보, 착용 러닝화 로테이션)
 struct DayDetailCardView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query private var allShoes: [RunningShoe]
+    
     let month: Int
     let day: Int
     let sessions: [RunSession]
@@ -28,6 +32,17 @@ struct DayDetailCardView: View {
         let calendar = Calendar.current
         let today = Date()
         return calendar.component(.month, from: today) == month && calendar.component(.day, from: today) == day
+    }
+    
+    private var activeShoe: RunningShoe? {
+        allShoes.first(where: { $0.isActive && !$0.isRetired })
+    }
+    
+    private func currentShoe(for session: RunSession) -> RunningShoe? {
+        if let shoeId = session.shoeId {
+            return allShoes.first(where: { $0.id == shoeId })
+        }
+        return activeShoe
     }
     
     // 달리기 시작 시각 포맷 (예: "오전 7:30")
@@ -218,6 +233,75 @@ struct DayDetailCardView: View {
                                     }
                                 }
                                 .frame(maxWidth: .infinity, alignment: .trailing)
+                            }
+                            
+                            // 착용 러닝화 로테이션 선택/변경 메뉴 바
+                            if !allShoes.isEmpty {
+                                Divider()
+                                    .opacity(0.3)
+                                
+                                HStack {
+                                    HStack(spacing: 4) {
+                                        Image(systemName: "shoe.2.fill")
+                                            .font(.system(size: 10, weight: .bold))
+                                            .foregroundStyle(Color.orange)
+                                        Text("착용 신발")
+                                            .font(.system(size: 11, weight: .medium))
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Menu {
+                                        Button {
+                                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                            session.shoeId = nil
+                                            try? modelContext.save()
+                                        } label: {
+                                            HStack {
+                                                if let active = activeShoe {
+                                                    Text("기본 주력 (\(active.name))")
+                                                } else {
+                                                    Text("기본 신발")
+                                                }
+                                                if session.shoeId == nil {
+                                                    Image(systemName: "checkmark")
+                                                }
+                                            }
+                                        }
+                                        
+                                        Divider()
+                                        
+                                        ForEach(allShoes) { shoe in
+                                            Button {
+                                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                                session.shoeId = shoe.id
+                                                try? modelContext.save()
+                                            } label: {
+                                                HStack {
+                                                    Text(shoe.name)
+                                                    if session.shoeId == shoe.id {
+                                                        Image(systemName: "checkmark")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } label: {
+                                        HStack(spacing: 4) {
+                                            Text(currentShoe(for: session)?.name ?? "신발 선택")
+                                                .font(.system(size: 11, weight: .semibold))
+                                                .foregroundStyle(Color.orange)
+                                                .lineLimit(1)
+                                            Image(systemName: "chevron.up.chevron.down")
+                                                .font(.system(size: 8, weight: .bold))
+                                                .foregroundStyle(Color.orange.opacity(0.8))
+                                        }
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 3)
+                                        .background(Color.orange.opacity(0.12))
+                                        .clipShape(Capsule())
+                                    }
+                                }
                             }
                         }
                         .padding(12)
