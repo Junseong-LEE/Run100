@@ -82,18 +82,12 @@ struct ShoeWearCardView: View {
                 .clipShape(Capsule())
             }
             
-            // 2. 신발 모델명
+            // 2. 러닝화 이름
             HStack(alignment: .firstTextBaseline) {
                 Text(shoe.name)
                     .font(.system(size: 17, weight: .black))
                     .foregroundStyle(.primary)
                     .lineLimit(1)
-                
-                if !shoe.brand.isEmpty {
-                    Text(shoe.brand)
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(.secondary)
-                }
                 
                 Spacer()
                 

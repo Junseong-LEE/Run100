@@ -170,12 +170,6 @@ struct ShoeManagementView: View {
                     Text(shoe.name)
                         .font(.system(size: 20, weight: .black))
                         .foregroundStyle(.primary)
-                    
-                    if !shoe.brand.isEmpty {
-                        Text(shoe.brand)
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(.secondary)
-                    }
                 }
                 
                 Spacer()

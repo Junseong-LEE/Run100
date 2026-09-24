@@ -36,12 +36,9 @@ struct AddShoeSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                // 1. 기본 정보
-                Section(header: Text("기본 정보")) {
-                    TextField("러닝화 모델명 (예: 페가수스 41)", text: $name)
-                        .font(.system(size: 15))
-                    
-                    TextField("브랜드 (선택, 예: 나이키, 아식스)", text: $brand)
+                // 1. 기본 정보 (단일 이름 입력 필드로 통합)
+                Section(header: Text("러닝화 이름")) {
+                    TextField("예: 나이키 페가수스 41, 아식스 님버스 26", text: $name)
                         .font(.system(size: 15))
                 }
                 
@@ -198,7 +195,7 @@ struct AddShoeSheet: View {
             .alert("입력 오류", isPresented: $showValidationError) {
                 Button("확인", role: .cancel) {}
             } message: {
-                Text("러닝화 모델명을 입력해주세요.")
+                Text("러닝화 이름을 입력해주세요.")
             }
         }
     }
