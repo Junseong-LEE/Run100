@@ -70,11 +70,12 @@ struct DailyDistanceChartView: View {
         monthlyPoints.filter { $0.day == selectedDay }
     }
     
-    // X축 (거리) 범위: 5km 단위 올림 (최소 10km 보장)
+    // X축 (거리) 범위: 이번 달 실제 최장 거리를 1km 단위로 올림 (최소 10km 보장)
+    // 5km 단위 올림을 배제하여 10.2km를 달렸을 때 15km까지 불필요하게 늘어나는 현상 원천 차단
     private var maxXKm: Double {
         let maxDist = monthlyPoints.map(\.distanceKm).max() ?? 0.0
-        let rounded5k = ceil((maxDist * 1.08) / 5.0) * 5.0
-        return max(rounded5k, 10.0)
+        let rounded1k = ceil(maxDist)
+        return max(rounded1k, 10.0)
     }
     
     // Y축 (페이스) 범위: 30초 단위(5:00, 5:30 등)로 정밀 스냅
@@ -324,21 +325,22 @@ struct DailyDistanceChartView: View {
         .frame(width: plotWidth + 36, height: plotHeight)
     }
     
-    // MARK: - X축 눈금 라벨 (거리: 0km, 5km, 10km...)
+    // MARK: - X축 눈금 라벨 (1km 스케일에 맞춘 2km 간격: 0k, 2k, 4k... 및 끝값)
     private func xAxisLabels(plotWidth: CGFloat, plotHeight: CGFloat) -> some View {
-        let step = maxXKm <= 15.0 ? 5.0 : 10.0
-        var ticks: [Double] = [0.0]
-        var current = step
-        while current <= maxXKm + 0.1 {
-            ticks.append(current)
-            current += step
+        let maxVal = Int(maxXKm)
+        var ticks: [Int] = []
+        for km in stride(from: 0, through: maxVal, by: 2) {
+            ticks.append(km)
+        }
+        if let last = ticks.last, maxVal - last >= 1 {
+            ticks.append(maxVal)
         }
         
         return ZStack(alignment: .leading) {
-            ForEach(ticks, id: \.self) { dist in
-                let xRatio = CGFloat(dist / maxXKm)
+            ForEach(ticks, id: \.self) { km in
+                let xRatio = CGFloat(Double(km) / maxXKm)
                 let xPos = 36 + (xRatio * (plotWidth - 12)) + 6
-                let label = String(format: "%.0fk", dist)
+                let label = "\(km)k"
                 
                 Text(label)
                     .font(.system(size: 8.5, weight: .semibold, design: .rounded))
