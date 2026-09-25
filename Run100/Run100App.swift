@@ -17,6 +17,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
+        // 단위 테스트(XCTest) 실행 시에는 Firebase 초기화 생략 (가짜 테스트 계정 생성 방지)
+        guard NSClassFromString("XCTestCase") == nil else {
+            return true
+        }
+        
         // Firebase 매니저 초기화
         FirebaseManager.shared.configure()
         
