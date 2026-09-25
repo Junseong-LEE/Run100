@@ -535,6 +535,11 @@ Run100 앱의 개발 진행 상황, 주요 기능 구현, 아키텍처 결정 �
    - **사용자 경험 무결성**: 사용자에게 로그인/회원가입 UI를 전혀 노출하지 않고, 앱 실행 시 백그라운드에서 안전하게 무작위 난수 식별자(UID) 발급.
    - **콘솔 사용자 목록(Users) 지원**: Firebase 웹 콘솔의 [Authentication ➔ Users]에서 실시간으로 앱 사용자 명단 확인 가능.
    - **애널리틱스 & 크래시 연계**: `Analytics.setUserID` 및 `Crashlytics.setUserID` 바인딩을 통해 익명 세션 단위 추적 환경 구축.
+5. **대고객 출시 대비 개인정보처리방침 전면 최신화 (`PRIVACY_POLICY.md`)**
+   - **Firebase 인프라 반영**: Crashlytics(진단), Analytics(이용 통계), Anonymous Auth(기기 식별자) 비식별 데이터 처리 목적 명시.
+   - **타사 추적(Tracking) 및 광고 일절 배제**: 개인정보 보호법 및 Apple App Store 심사 가이드라인 기준에 부합하도록 명문화.
+   - **HealthKit 데이터 로컬 보호 재확인**: 애플 건강 데이터는 Firebase나 외부 서버로 일절 전송되지 않음을 명시.
+
 
 
 

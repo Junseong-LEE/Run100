@@ -393,6 +393,7 @@ final class RunningShoe {
    - 서버 통신 없이도 로컬 `SwiftData`만으로 100% 독립 동작 보장.
 3. **데이터 보호 & 개인정보**:
    - GPS 위치 좌표를 서버나 외부로 전송하지 않음 (Apple HealthKit의 읽기 데이터는 기기 로컬 샌드박스 내부에서만 소비).
+   - 투명한 개인정보 처리 및 App Store 심사 기준 준수: [`PRIVACY_POLICY.md`](file:///Users/poby/Documents/GitHub/Run100/PRIVACY_POLICY.md) 명세.
 
 ---
 
