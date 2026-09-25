@@ -531,6 +531,11 @@ Run100 앱의 개발 진행 상황, 주요 기능 구현, 아키텍처 결정 �
 3. **런칭 타이밍 이슈 해결 및 안정성 검증 (`Run100App.swift`, `FirebaseManager.swift`)**
    - `RemoteConfig` 초기화 시점이 `FirebaseApp.configure()`보다 앞서 발생하는 `FIRAppNotConfigured` 결함을 옵셔널 지연 초기화로 완벽 해결.
    - 14개 핵심 단위 테스트 100% 통과 (`** TEST SUCCEEDED **`).
+4. **비침습적 익명 사용자 인증 연동 (`FirebaseAuth`, `FirebaseManager.swift`)**
+   - **사용자 경험 무결성**: 사용자에게 로그인/회원가입 UI를 전혀 노출하지 않고, 앱 실행 시 백그라운드에서 안전하게 무작위 난수 식별자(UID) 발급.
+   - **콘솔 사용자 목록(Users) 지원**: Firebase 웹 콘솔의 [Authentication ➔ Users]에서 실시간으로 앱 사용자 명단 확인 가능.
+   - **애널리틱스 & 크래시 연계**: `Analytics.setUserID` 및 `Crashlytics.setUserID` 바인딩을 통해 익명 세션 단위 추적 환경 구축.
+
 
 
 

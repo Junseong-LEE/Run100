@@ -7,13 +7,14 @@
 
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 import FirebaseCrashlytics
 import FirebaseAnalytics
 import FirebaseRemoteConfig
 import FirebaseMessaging
 import UserNotifications
 
-/// Firebase 통합 관리 서비스 (Crashlytics, Analytics, Remote Config, Messaging)
+/// Firebase 통합 관리 서비스 (Crashlytics, Analytics, Remote Config, Messaging, Anonymous Auth)
 @Observable
 final class FirebaseManager: NSObject {
     static let shared = FirebaseManager()
@@ -22,6 +23,7 @@ final class FirebaseManager: NSObject {
     var announcementMessage: String = ""
     var isAnnouncementActive: Bool = false
     var latestFCMToken: String? = nil
+    var currentUserId: String? = nil
     
     private var remoteConfig: RemoteConfig?
     
@@ -52,6 +54,38 @@ final class FirebaseManager: NSObject {
             "os_version": UIDevice.current.systemVersion,
             "device_model": UIDevice.current.model
         ])
+        
+        // 4. 익명 사용자 인증 (백그라운드 비식별 등록)
+        setupAnonymousAuth()
+    }
+    
+    // MARK: - Anonymous Auth (사용자 리스트 확인을 위한 익명 등록)
+    private func setupAnonymousAuth() {
+        if let currentUser = Auth.auth().currentUser {
+            bindUserIdentifiers(uid: currentUser.uid)
+        } else {
+            Auth.auth().signInAnonymously { [weak self] authResult, error in
+                guard let self = self else { return }
+                if let error = error {
+                    Crashlytics.crashlytics().record(error: error)
+                    return
+                }
+                if let user = authResult?.user {
+                    self.bindUserIdentifiers(uid: user.uid)
+                }
+            }
+        }
+    }
+    
+    private func bindUserIdentifiers(uid: String) {
+        DispatchQueue.main.async {
+            self.currentUserId = uid
+        }
+        #if DEBUG
+        print("🔥 [FirebaseManager] 익명 사용자 식별자(UID): \(uid)")
+        #endif
+        Analytics.setUserID(uid)
+        Crashlytics.crashlytics().setUserID(uid)
     }
     
     // MARK: - Remote Config

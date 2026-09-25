@@ -14,6 +14,7 @@
 		FB000013305E158000E93276 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = FB000003305E158000E93276 /* FirebaseCrashlytics */; };
 		FB000014305E158000E93276 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = FB000004305E158000E93276 /* FirebaseRemoteConfig */; };
 		FB000015305E158000E93276 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = FB000005305E158000E93276 /* FirebaseMessaging */; };
+		FB000016305E158000E93276 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = FB000006305E158000E93276 /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,6 +118,7 @@
 				FB000013305E158000E93276 /* FirebaseCrashlytics in Frameworks */,
 				FB000014305E158000E93276 /* FirebaseRemoteConfig in Frameworks */,
 				FB000015305E158000E93276 /* FirebaseMessaging in Frameworks */,
+				FB000016305E158000E93276 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,6 +219,7 @@
 				FB000003305E158000E93276 /* FirebaseCrashlytics */,
 				FB000004305E158000E93276 /* FirebaseRemoteConfig */,
 				FB000005305E158000E93276 /* FirebaseMessaging */,
+				FB000006305E158000E93276 /* FirebaseAuth */,
 			);
 			productName = Run100;
 			productReference = C6E237D9305E158000E93276 /* Run100.app */;
@@ -827,6 +830,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = FB000001305E158000E93276 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
+		};
+		FB000006305E158000E93276 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB000001305E158000E93276 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
