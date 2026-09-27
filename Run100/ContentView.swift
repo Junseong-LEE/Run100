@@ -14,11 +14,7 @@ struct ContentView: View {
     @AppStorage("appTheme") private var appTheme: String = "dark"
     
     private var colorScheme: ColorScheme? {
-        switch appTheme {
-        case "light": return .light
-        case "dark": return .dark
-        default: return nil // 시스템 설정 일치
-        }
+        appTheme == "light" ? .light : .dark
     }
     
     var body: some View {
