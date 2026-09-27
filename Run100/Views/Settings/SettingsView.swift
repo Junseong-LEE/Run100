@@ -139,25 +139,15 @@ struct SettingsView: View {
                     Label("장비 관리", systemImage: "tshirt.fill")
                 }
                 
-                // 3. 화면 테마 모드 섹션 (다크 모드 기본 토글)
+                // 3. 화면 테마 모드 섹션 (2분할 세그먼트 픽커)
                 Section {
-                    Toggle(isOn: Binding(
-                        get: { appTheme != "light" },
-                        set: { isDark in
-                            appTheme = isDark ? "dark" : "light"
-                        }
-                    )) {
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("다크 모드")
-                                .font(.system(size: 15, weight: .semibold))
-                            Text(appTheme == "light" ? "라이트 모드 적용 중" : "다크 모드 적용 중 (기본)")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
+                    Picker("화면 스타일", selection: $appTheme) {
+                        Text("☀️ 라이트").tag("light")
+                        Text("🌙 다크 (기본)").tag("dark")
                     }
-                    .tint(Color.orange)
+                    .pickerStyle(.segmented)
                 } header: {
-                    Label("화면 스타일", systemImage: "moon.fill")
+                    Label("화면 스타일", systemImage: "circle.lefthalf.filled")
                 }
 
                 
