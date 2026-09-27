@@ -94,15 +94,15 @@ final class HealthKitManager {
         // 1. 권한 확인 및 요청
         _ = try await requestAuthorization()
         
-        // 2. 동기화 조회 기간 설정 (기본: 최근 1년 전 1일부터 조회하여 과월 데이터도 완벽 동기화)
+        // 2. 동기화 조회 기간 설정 (기본: 최근 2년 전 1일부터 조회하여 과월 데이터도 완벽 동기화)
         let calendar = Calendar.current
         let queryStartDate: Date
         if let startDate = startDate {
             queryStartDate = startDate
         } else {
-            let oneYearAgo = calendar.date(byAdding: .year, value: -1, to: Date()) ?? Date().addingTimeInterval(-365 * 86400)
-            let components = calendar.dateComponents([.year, .month], from: oneYearAgo)
-            queryStartDate = calendar.date(from: components) ?? oneYearAgo
+            let twoYearsAgo = calendar.date(byAdding: .year, value: -2, to: Date()) ?? Date().addingTimeInterval(-730 * 86400)
+            let components = calendar.dateComponents([.year, .month], from: twoYearsAgo)
+            queryStartDate = calendar.date(from: components) ?? twoYearsAgo
         }
         
         // 3. 워크아웃 쿼리 실행 (달리기 워크아웃만 필터링)
