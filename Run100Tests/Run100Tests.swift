@@ -43,7 +43,6 @@ struct Run100Tests {
         #expect(exactProgress.isGoalAchieved)
         #expect(!exactProgress.isOverachieved)
         #expect(exactProgress.excessKm == 0.0)
-        #expect(exactProgress.recommendedDailyKm == 0.0)
         
         // 100km 초과 달성 시 검증 (102.5km)
         let overProgress = MonthlyProgress(
@@ -60,7 +59,6 @@ struct Run100Tests {
         #expect(overProgress.isGoalAchieved)
         #expect(overProgress.isOverachieved)
         #expect(overProgress.excessKm == 2.5)
-        #expect(overProgress.coachMessage.contains("보너스 질주"))
     }
 
     @Test func testRunStoreAggregation() async throws {

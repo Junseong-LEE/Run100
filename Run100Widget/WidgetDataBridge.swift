@@ -23,7 +23,6 @@ struct WidgetSnapshotData: Codable {
     let totalAccumulatedKm: Double
     let remainingKm: Double
     let completionPercentage: Int
-    let recommendedDailyKm: Double
     let remainingDaysInMonth: Int
     let currentStreak: Int
     let recent7Days: [WidgetDayStatus]
@@ -56,7 +55,6 @@ struct WidgetSnapshotData: Codable {
             totalAccumulatedKm: 68.0,
             remainingKm: 32.0,
             completionPercentage: 68,
-            recommendedDailyKm: 3.5,
             remainingDaysInMonth: 9,
             currentStreak: 4,
             recent7Days: sample7Days,

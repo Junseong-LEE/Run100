@@ -158,37 +158,7 @@ struct MonthlyProgress {
         return max(totalDaysInMonth - currentDay + 1, 1)
     }
     
-    /// 💡 핵심 코칭: 오늘 권장 달리기 거리 (km)
-    /// 남은 거리 / 남은 일수 (오늘 포함)
-    var recommendedDailyKm: Double {
-        guard !isGoalAchieved, remainingDaysInMonth > 0 else { return 0.0 }
-        let daily = remainingKm / Double(remainingDaysInMonth)
-        // 소수점 1자리로 반올림
-        return (daily * 10).rounded() / 10
-    }
-    
-    /// 동기부여 코칭 안내 문구
-    var coachMessage: String {
-        if isGoalAchieved {
-            if isOverachieved {
-                if remainingDaysInMonth == 0 {
-                    return String(format: "%dkm를 넘어 총 %.1fkm로 한계를 완벽히 돌파했던 달입니다 🏆", Int(targetKm), totalAccumulatedKm)
-                } else if excessKm < 10.0 {
-                    return String(format: "%dkm 완주 후 +%.1fkm 보너스 질주! 한계를 넘어서는 중 🚀", Int(targetKm), excessKm)
-                } else {
-                    return String(format: "목표를 +%.1fkm 초과 달성! 놀라운 러닝 레전드입니다 🔥", excessKm)
-                }
-            } else {
-                return remainingDaysInMonth == 0 ? "🎉 \(Int(targetKm))km 완주를 달성했던 멋진 달입니다!" : "🎉 이번 달 \(Int(targetKm))km 완주를 축하합니다!"
-            }
-        } else if remainingDaysInMonth == 0 {
-            return "\(month)월 러닝 챌린지가 종료되었습니다."
-        } else if remainingDaysInMonth == 1 {
-            return String(format: "오늘 마지막 날! %.1fkm 달리고 %dkm를 완성하세요! 🔥", remainingKm, Int(targetKm))
-        } else {
-            return String(format: "남은 %d일 동안 하루 %.1fkm만 뛰면 %dkm 완주! 🏃", remainingDaysInMonth, recommendedDailyKm, Int(targetKm))
-        }
-    }
+
     
     // MARK: - 동기간(N일차) 누적 거리 경쟁 (과거의 나와 대결)
     

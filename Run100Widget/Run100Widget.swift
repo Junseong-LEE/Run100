@@ -47,7 +47,7 @@ struct Run100Widget: Widget {
             MediumWidgetView(data: entry.data)
         }
         .configurationDisplayName("Run100 월간 러닝")
-        .description("이번 달 100km 완주율과 오늘 권장 달리기, 최근 7일 잔디 심기를 한눈에 확인하세요.")
+        .description("이번 달 100km 완주율과 평균 페이스, 평균 심박수를 홈 화면에서 한눈에 확인하세요.")
         .supportedFamilies([.systemMedium])
         .contentMarginsDisabled()
     }

@@ -11,14 +11,16 @@
 ### 1.1 배경 및 목적
 - 수많은 러닝 앱(나이키 런 클럽, 스트라바 등)은 실시간 GPS 측정, SNS 피드, 복잡한 크루 기능 등으로 인해 진입 장벽이 높고 UI가 복잡함.
 - 대다수 러너들은 이미 **애플 워치, 가민(Garmin) 또는 기존 피트니스 앱**으로 달리기를 측정함.
-- 러너들에게 진정으로 필요한 것은 **"이번 달 100km를 채우기 위해 오늘 몇 km를 뛰어야 하는가?"**에 대한 명확한 코칭과, 매일 뛰어 채워지는 **"시각적 성취감(잔디 심기/스트릭)"**임.
-- **Run100**은 측정 기능을 과감히 걷어내고, **대시보드(Dashboard)**와 **캘린더(Calendar)** 2대 핵심 화면으로만 구성된 궁극의 미니멀 100km 트래커를 지향함.
+- 러너들에게 진정으로 필요한 것은 과도한 실시간 강요나 미래 코칭이 아닌, 이번 달 나의 러닝 성과를 한눈에 파악하는 **"월 100km 목표 누적 및 페이스/심박 성적표"**, 과거 나와의 경쟁을 보여주는 **"올림픽 고스트 레이스"**, 그리고 매일 뛰어 채워지는 **"시각적 성취감(출석체크/스트릭/러닝화 수명 관리)"**임.
+- **Run100**은 측정 기능을 과감히 걷어내고, **대시보드(Dashboard)**, **캘린더(Calendar)**, **히스토리(History)**, **설정(Settings)** 4대 화면으로 구성된 궁극의 미니멀 100km 회고 트래커를 지향함.
 
 ### 1.2 핵심 사용자 가치 (Core Value Proposition)
-1. **월 100km 역산 코칭**: 남은 일수와 남은 거리를 계산하여 매일 부담 없는 권장 거리 제시 (예: *"남은 9일 동안 하루 3.5km만 뛰면 100km 완주!"*)
-2. **원터치 기록 누적 & HealthKit 연동**: 애플 건강 앱(Apple HealthKit)의 러닝 워크아웃 데이터를 백그라운드 자동 동기화하거나 수동으로 3초 만에 기록 추가.
-3. **깃허브 스타일 잔디 심기 캘린더**: 뛴 거리에 따라 채도가 달라지는 30일 히트맵 매트릭스로 매일 뛰는 연속성(Streak) 보상.
-4. **iOS 홈 화면(바탕화면) 위젯 지원**: 앱을 켜지 않아도 스마트폰 홈 화면과 잠금화면에서 이번 달 진행률과 오늘 권장 러닝 거리를 상시 확인.
+1. **월 100km 프로그레스 & 듀얼 성적표**: 이번 달 누적 거리(km)와 달성률(%)을 오렌지-앰버 원형 링으로 시각화하고, **이번 달 평균 페이스** 및 **평균 심박수**를 2단 카드로 즉각 회고.
+2. **1~4번 레인 올림픽 스타디움 고스트 레이스**: 이번 달의 나와 과거 3개월 동안의 내가 동일 일자(N일차) 기준으로 100m 결승 트랙 위에서 실시간 레이스를 펼치며 성취감과 동기부여 제공.
+3. **원터치 기록 누적 & HealthKit 연동**: 애플 건강 앱(Apple HealthKit)의 러닝 워크아웃 데이터를 백그라운드 자동 동기화하거나 수동으로 3초 만에 기록 추가.
+4. **N월 출석체크 히트맵 & 거리×페이스 산점도 차트**: 뛴 거리에 따라 채도가 달라지는 월간 출석 매트릭스로 연속성(Streak)을 보상하고, 일자별 거리와 페이스 분포를 2차원 산점도로 분석.
+5. **러닝화 수명 및 로테이션 관리 (Gear Tracker)**: 착용 중인 신발의 누적 마일리지와 소모율(%)을 모니터링하고, 조깅화·레이싱화 등 2켤레 이상의 로테이션 러닝 세션별 원터치 매핑 지원.
+6. **iOS 홈 화면 바탕화면 위젯 지원**: 앱을 켜지 않아도 홈 화면에서 이번 달 진행률, 평균 페이스, 평균 심박수를 히어로 카드 일체형 디자인으로 상시 확인.
 
 ---
 
@@ -114,30 +116,25 @@ struct MonthlyProgress {
     var totalAccumulatedKm: Double
     var sessionsCount: Int
     var currentStreak: Int
-    var restDaysCount: Int
+    var runDaysCount: Int
+    var totalDurationSeconds: TimeInterval
+    var averageHeartRate: Double?
     
     // 계산 프로퍼티
-    var remainingKm: Double {
-        max(targetKm - totalAccumulatedKm, 0.0)
-    }
+    var remainingKm: Double { max(targetKm - totalAccumulatedKm, 0.0) }
+    var isOverachieved: Bool { totalAccumulatedKm > targetKm + 0.05 }
+    var excessKm: Double { max(totalAccumulatedKm - targetKm, 0.0) }
+    var progressRatio: Double { min(totalAccumulatedKm / targetKm, 1.0) }
+    var completionPercentage: Int { Int(progressRatio * 100) }
+    var isGoalAchieved: Bool { totalAccumulatedKm >= targetKm }
     
-    var progressRatio: Double {
-        min(totalAccumulatedKm / targetKm, 1.0)
-    }
+    // 듀얼 성적표 포맷터
+    var paceValueOnly: String { /* MM:SS */ }
+    var heartRateValueOnly: String { /* BPM */ }
     
-    var completionPercentage: Int {
-        Int(progressRatio * 100)
-    }
-    
-    var isGoalAchieved: Bool {
-        totalAccumulatedKm >= targetKm
-    }
-    
-    // 오늘 권장 거리: 남은 거리 / 남은 일수 (당월 말일까지)
-    func recommendedDailyKm(remainingDaysInMonth: Int) -> Double {
-        guard remainingDaysInMonth > 0 && remainingKm > 0 else { return 0.0 }
-        return (remainingKm / Double(remainingDaysInMonth))
-    }
+    // 4레인 스타디움 고스트 레이스
+    var samePeriodComparisons: [SamePeriodGhostComparison] { /* 이번 달 vs 과거 3개월 N일차 비교 */ }
+    var ghostCompetitionMessage: String { /* "지난달 대비 +2.5km 🔥" */ }
 }
 ```
 
@@ -404,7 +401,7 @@ final class RunningShoe {
   - [x] `RunSession`, `MonthlyProgress` SwiftData 스키마 정의
 - [x] **Step 2: Dashboard View UI**
   - [x] 원형 프로그레스 링 컴포넌트 (`ProgressRingView.swift`) 구현
-  - [x] 일일 권장 거리 역산 코칭 알고리즘 구현
+  - [x] 듀얼 성적표(평균 페이스 & 심박수) 및 연속 스트릭/러닝화 수명 칩 구현
   - [x] 수동 기록 Bottom Sheet 및 SwiftData Create/Read 연동
 - [x] **Step 3: Calendar View UI**
   - [x] `LazyVGrid` 기반 30일 잔디 매트릭스 구현
@@ -415,7 +412,7 @@ final class RunningShoe {
   - [x] 햅틱 피드백(`UIFeedbackGenerator`) 전역 적용
 - [x] **Step 5: Home Screen Widget (Medium 2x4 단일 규격)**
   - [x] App Group / 공유 데이터 브리지(`WidgetDataBridge`) 구축
-  - [x] Medium 위젯 뷰 (원형 링 + 최근 7일 잔디 스트립 + 권장 거리 코칭) 구현
+  - [x] Medium 위젯 뷰 (원형 링 + 이번 달 평균 페이스 & 심박수 히어로 카드 일체형) 구현
   - [x] 앱 내 기록 추가/동기화 시 `WidgetCenter.shared.reloadAllTimelines()` 실시간 연동
 - [x] **Step 6: Multi-Dimensional History & Gear Tracker (v1.1 ~ v1.3)**
   - [x] 4대 지표(거리/페이스/심박/출석) 다차원 히스토리 분석 탭 신설
