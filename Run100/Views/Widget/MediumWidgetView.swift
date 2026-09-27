@@ -70,7 +70,9 @@ struct MediumWidgetView: View {
                         if isOverachieved {
                             Image(systemName: "flame.fill")
                                 .font(.system(size: 7.5, weight: .bold))
-                            Text("초과달성 중")
+                            Text("초과달성")
+                            Image(systemName: "flame.fill")
+                                .font(.system(size: 7.5, weight: .bold))
                         } else {
                             Text("\(min(data.completionPercentage, 100))% 달성")
                         }
