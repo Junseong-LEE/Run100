@@ -182,6 +182,7 @@ struct DailyDistanceChartView: View {
                         }
                     }
                     .lineLimit(1)
+                    .minimumScaleFactor(0.85)
                 } else {
                     Text("휴식 Day")
                         .font(.system(size: 12, weight: .medium))
