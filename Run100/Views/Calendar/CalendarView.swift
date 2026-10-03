@@ -40,30 +40,7 @@ struct CalendarView: View {
             calendar.date(byAdding: .month, value: -offset, to: today)
         }
     }
-    
-    // 오늘까지 지나간 일수
-    private var passedDays: Int {
-        let calendar = Calendar.current
-        let today = Date()
-        let y = calendar.component(.year, from: today)
-        let m = calendar.component(.month, from: today)
-        if y == store.selectedYear && m == store.selectedMonth {
-            return calendar.component(.day, from: today)
-        }
-        return progress.totalDaysInMonth
-    }
-    
-    // 오늘까지의 휴식 일수
-    private var restDaysCount: Int {
-        max(passedDays - progress.runDaysCount, 0)
-    }
-    
-    // 출석률 (%)
-    private var attendanceRate: Double {
-        guard passedDays > 0 else { return 0.0 }
-        let rate = (Double(progress.runDaysCount) / Double(passedDays)) * 100.0
-        return (rate * 10).rounded() / 10
-    }
+
     
     // 선택된 일자의 러닝 세션들
     private var selectedDaySessions: [RunSession] {
@@ -151,33 +128,7 @@ struct CalendarView: View {
                     }
                     .padding(.horizontal)
                     .padding(.top, 6)
-                    
-                    // 2. 월간 통계 3분할 콤팩트 바 (SF Symbols 벡터 심볼 적용)
-                    HStack(spacing: 8) {
-                        StatCard(
-                            systemImage: "checkmark.circle.fill",
-                            iconColor: .orange,
-                            value: "\(progress.runDaysCount)일",
-                            label: "달린 날"
-                        )
-                        
-                        StatCard(
-                            systemImage: "moon.stars.fill",
-                            iconColor: .indigo,
-                            value: "\(restDaysCount)일",
-                            label: "휴식한 날"
-                        )
-                        
-                        StatCard(
-                            systemImage: "chart.line.uptrend.xyaxis",
-                            iconColor: .green,
-                            value: String(format: "%.1f%%", attendanceRate),
-                            label: "출석률"
-                        )
-                    }
-                    .padding(.horizontal)
-                    
-                    // 3. N월 출석체크 히트맵 그리드 (기능 F-202: 연속 스트릭 배지 내장)
+                    // 2. N월 출석체크 히트맵 그리드 (기능 F-202: 연속 스트릭 배지 내장)
                     HeatmapGridView(
                         year: store.selectedYear,
                         month: store.selectedMonth,
@@ -263,33 +214,6 @@ struct CalendarView: View {
     }
 }
 
-/// 통계 미니 카드 컴포넌트 (SF Symbols 기반 콤팩트 칩)
-private struct StatCard: View {
-    let systemImage: String
-    let iconColor: Color
-    let value: String
-    var label: String? = nil
-    
-    var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: systemImage)
-                .font(.system(size: 13, weight: .bold))
-                .foregroundStyle(iconColor)
-            
-            Text(value)
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .foregroundStyle(.primary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.85)
-        }
-        .frame(maxWidth: .infinity)
-        .frame(height: 38)
-        .background(Color(uiColor: .secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 11, style: .continuous))
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(label ?? "") \(value)")
-    }
-}
 
 #Preview {
     CalendarView()
