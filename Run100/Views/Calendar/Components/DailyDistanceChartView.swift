@@ -24,6 +24,7 @@ struct DailyDistanceChartView: View {
         let id: UUID
         let day: Int
         let distanceKm: Double
+        let durationSeconds: Double
         let paceSeconds: Double   // 초 / km
         let heartRate: Int?       // bpm
         let memo: String?
@@ -58,6 +59,7 @@ struct DailyDistanceChartView: View {
                 id: session.id,
                 day: d,
                 distanceKm: session.distanceKm,
+                durationSeconds: session.durationSeconds,
                 paceSeconds: paceSec,
                 heartRate: session.averageHeartRate,
                 memo: session.memo
@@ -68,6 +70,38 @@ struct DailyDistanceChartView: View {
     // 현재 선택된 일자의 러닝 포인트들
     private var selectedDayPoints: [ScatterPoint] {
         monthlyPoints.filter { $0.day == selectedDay }
+    }
+    
+    // 선택된 일자의 종합 러닝 요약 (단일 러닝 및 2회 이상 다중 러닝 합산 지원)
+    private struct DaySummary {
+        let totalDistanceKm: Double
+        let formattedDistance: String
+        let formattedPace: String
+        let averageHeartRate: Int?
+        let runCount: Int
+    }
+    
+    private var selectedDaySummary: DaySummary? {
+        guard !selectedDayPoints.isEmpty else { return nil }
+        
+        let totalDist = selectedDayPoints.reduce(0.0) { $0 + $1.distanceKm }
+        let totalDuration = selectedDayPoints.reduce(0.0) { $0 + $1.durationSeconds }
+        
+        let paceSec: Double = totalDist > 0 ? (totalDuration / totalDist) : 0
+        let m = Int(paceSec) / 60
+        let s = Int(paceSec) % 60
+        let paceStr = String(format: "%d'%02d\"", m, s)
+        
+        let hrPoints = selectedDayPoints.compactMap(\.heartRate)
+        let avgHr: Int? = hrPoints.isEmpty ? nil : Int(round(Double(hrPoints.reduce(0, +)) / Double(hrPoints.count)))
+        
+        return DaySummary(
+            totalDistanceKm: totalDist,
+            formattedDistance: String(format: "%.1f km", totalDist),
+            formattedPace: paceStr,
+            averageHeartRate: avgHr,
+            runCount: selectedDayPoints.count
+        )
     }
     
     // X축 (거리) 범위: 이번 달 실제 최장 거리를 1km 단위로 올림 (최소 10km 보장)
@@ -152,9 +186,13 @@ struct DailyDistanceChartView: View {
                     .font(.system(size: 12, weight: .bold, design: .rounded))
                     .foregroundStyle(.primary)
                 
-                if let mainPoint = selectedDayPoints.first {
+                if let summary = selectedDaySummary {
                     HStack(spacing: 6) {
-                        Text(String(format: "%.1f km", mainPoint.distanceKm))
+                        let distText = summary.runCount > 1 
+                            ? "\(summary.formattedDistance) (\(summary.runCount)회)" 
+                            : summary.formattedDistance
+                        
+                        Text(distText)
                             .font(.system(size: 12, weight: .heavy, design: .rounded))
                             .foregroundStyle(Color.orange)
                         
@@ -162,11 +200,11 @@ struct DailyDistanceChartView: View {
                             .font(.system(size: 10))
                             .foregroundStyle(.secondary.opacity(0.5))
                         
-                        Text(mainPoint.formattedPace)
+                        Text(summary.formattedPace)
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
                             .foregroundStyle(.primary)
                         
-                        if let hr = mainPoint.heartRate {
+                        if let hr = summary.averageHeartRate {
                             Text("•")
                                 .font(.system(size: 10))
                                 .foregroundStyle(.secondary.opacity(0.5))
