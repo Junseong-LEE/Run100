@@ -153,7 +153,7 @@ struct DailyDistanceChartView: View {
                     .foregroundStyle(.primary)
                 
                 if let mainPoint = selectedDayPoints.first {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         Text(String(format: "%.1f km", mainPoint.distanceKm))
                             .font(.system(size: 12, weight: .heavy, design: .rounded))
                             .foregroundStyle(Color.orange)
@@ -175,24 +175,27 @@ struct DailyDistanceChartView: View {
                                 Image(systemName: "heart.fill")
                                     .font(.system(size: 9))
                                     .foregroundStyle(Color.red.opacity(0.85))
-                                Text("\(hr) bpm")
+                                Text("\(hr)")
                                     .font(.system(size: 11, weight: .semibold, design: .rounded))
                                     .foregroundStyle(.secondary)
                             }
                         }
                     }
+                    .lineLimit(1)
                 } else {
                     Text("휴식 Day")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(.secondary)
                 }
                 
-                Spacer()
+                Spacer(minLength: 4)
                 
                 Text("총 \(monthlyPoints.count)회 러닝")
                     .font(.system(size: 10.5, weight: .medium))
                     .foregroundStyle(.secondary)
+                    .lineLimit(1)
             }
+            .lineLimit(1)
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
             .background(Color(.tertiarySystemFill).opacity(0.45))
