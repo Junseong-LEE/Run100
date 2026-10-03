@@ -13,9 +13,20 @@ struct ReleaseNotesModalView: View {
     // 버전별 주요 변경점 목록
     private let releases: [ReleaseNoteItem] = [
         ReleaseNoteItem(
+            version: "v1.4.1",
+            date: "2026.10.03",
+            isLatest: true,
+            title: "캘린더 화면 공간 최적화 & 산점도 다중 러닝 정밀 집계",
+            highlights: [
+                "📐 캘린더 상단 통계 미니 바 정리: 출석체크 히트맵과 산점도 차트를 스크롤 없이 시원하게 조망할 수 있도록 상단 3분할 칩 바를 정리하고 뷰포트 영역 대폭 확보",
+                "🎯 산점도 심박수 레이아웃 최적화: 심박수 'bpm' 단위를 생략하고 1줄 고정 및 자동 축소 스케일링을 적용하여 10km+ 장거리에서도 줄바꿈 없는 깔끔한 툴팁 제공",
+                "📊 산점도 2회 이상 다중 러닝 합산: 하루에 여러 번 달렸을 때 당일 총 거리 합계(예: 8.0km (2회))와 가중 평균 페이스, 평균 심박수를 정확하게 정밀 집계"
+            ]
+        ),
+        ReleaseNoteItem(
             version: "v1.4.0",
             date: "2026.09.27",
-            isLatest: true,
+            isLatest: false,
             title: "과거 기록 회고형 대시보드 정체성 확립 & 사용자 경험 최적화",
             highlights: [
                 "🔥 '초과달성' 배지 개편: 100km를 초과할 경우 과거 월과 현재 월 모두에서 어색함 없도록 불꽃 심볼이 양옆에 배치된 '🔥 초과달성 🔥' 앰버 캡슐 배지로 개편",
