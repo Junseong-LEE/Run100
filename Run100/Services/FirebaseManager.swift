@@ -61,6 +61,20 @@ final class FirebaseManager: NSObject {
     
     // MARK: - Anonymous Auth (사용자 리스트 확인을 위한 익명 등록)
     private func setupAnonymousAuth() {
+        // 단위 테스트 및 UI 테스트 환경에서는 익명 계정 발급 생략
+        let isRunningTests = NSClassFromString("XCTestCase") != nil
+            || ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+            || ProcessInfo.processInfo.environment["XCTestBundlePath"] != nil
+            || ProcessInfo.processInfo.environment["XCInjectBundleInto"] != nil
+            || ProcessInfo.processInfo.arguments.contains("-ui_testing")
+        
+        guard !isRunningTests else {
+            #if DEBUG
+            print("🧪 [FirebaseManager] 테스트 환경 감지: 익명 인증 등록을 생략합니다.")
+            #endif
+            return
+        }
+        
         if let currentUser = Auth.auth().currentUser {
             bindUserIdentifiers(uid: currentUser.uid)
         } else {

@@ -13,12 +13,20 @@ import UserNotifications
 
 // MARK: - App Delegate for Firebase & Push
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    private var isRunningTests: Bool {
+        NSClassFromString("XCTestCase") != nil
+            || ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+            || ProcessInfo.processInfo.environment["XCTestBundlePath"] != nil
+            || ProcessInfo.processInfo.environment["XCInjectBundleInto"] != nil
+            || ProcessInfo.processInfo.arguments.contains("-ui_testing")
+    }
+    
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
-        // 단위 테스트(XCTest) 실행 시에는 Firebase 초기화 생략 (가짜 테스트 계정 생성 방지)
-        guard NSClassFromString("XCTestCase") == nil else {
+        // 단위 테스트(XCTest) 및 UI 테스트 실행 시에는 Firebase 초기화 생략 (가짜 테스트 계정 생성 방지)
+        guard !isRunningTests else {
             return true
         }
         
