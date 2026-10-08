@@ -76,10 +76,11 @@ struct HeatmapGridView: View {
     var body: some View {
         VStack(spacing: 14) {
             // 상단 타이틀 & 연속 스트릭 배지 & 히트맵 범례
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Text("\(month)월 출석체크")
                     .font(.system(size: 14, weight: .bold))
                     .foregroundStyle(.primary)
+                    .lineLimit(1)
                 
                 // 연속 스트릭 배지 (기능 F-202 잔디 심기 상단으로 이동)
                 HStack(spacing: 3) {
@@ -88,40 +89,45 @@ struct HeatmapGridView: View {
                     Text("\(currentStreak)일 연속")
                         .font(.system(size: 11, weight: .bold))
                         .foregroundStyle(Color.orange)
+                        .lineLimit(1)
                 }
                 .padding(.horizontal, 7)
                 .padding(.vertical, 2.5)
                 .background(Color.orange.opacity(0.12))
                 .clipShape(Capsule())
                 
-                Spacer()
+                Spacer(minLength: 4)
                 
                 // 범례 (Legend)
                 HStack(spacing: 3) {
                     Text("휴식")
                         .font(.system(size: 10))
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
                     
                     RoundedRectangle(cornerRadius: 3)
                         .fill(Color(.systemGray5))
-                        .frame(width: 10, height: 10)
+                        .frame(width: 9, height: 9)
                     
                     RoundedRectangle(cornerRadius: 3)
                         .fill(Color.orange.opacity(0.35))
-                        .frame(width: 10, height: 10)
+                        .frame(width: 9, height: 9)
                     
                     RoundedRectangle(cornerRadius: 3)
                         .fill(Color.orange)
-                        .frame(width: 10, height: 10)
+                        .frame(width: 9, height: 9)
                     
                     RoundedRectangle(cornerRadius: 3)
                         .fill(Color(red: 0.98, green: 0.75, blue: 0.14))
-                        .frame(width: 10, height: 10)
+                        .frame(width: 9, height: 9)
                     
                     Text("10k+")
                         .font(.system(size: 10, weight: .bold))
                         .foregroundStyle(Color.orange)
+                        .lineLimit(1)
+                        .fixedSize()
                 }
+                .fixedSize(horizontal: true, vertical: false)
             }
             
             // 요일 헤더 (월~일)
