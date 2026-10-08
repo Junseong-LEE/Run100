@@ -28,6 +28,7 @@ struct SettingsView: View {
     @State private var syncResultMessage = ""
     @State private var showSyncResultAlert = false
     @State private var showReleaseNotes = false
+    @State private var showWelcomeGuide = false
     
     private var activeShoe: RunningShoe? {
         allShoes.first(where: { $0.isActive && !$0.isRetired })
@@ -138,6 +139,40 @@ struct SettingsView: View {
                     }
                 } header: {
                     Label("장비 관리", systemImage: "tshirt.fill")
+                }
+                
+                // 3. 시작 가이드 섹션 (처음 사용자 및 핵심 기능 안내)
+                Section {
+                    Button {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        showWelcomeGuide = true
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 16, weight: .bold))
+                                .foregroundStyle(Color.orange)
+                                .frame(width: 24)
+                            
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Run100 시작 가이드")
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundStyle(.primary)
+                                
+                                Text("월 100km 회고 & 핵심 기능 100% 활용법")
+                                    .font(.system(size: 12))
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                } header: {
+                    Label("가이드", systemImage: "book.fill")
                 }
                 
                 // 3. 화면 테마 모드 섹션 (2분할 세그먼트 픽커)
@@ -282,6 +317,11 @@ struct SettingsView: View {
             .sheet(isPresented: $showReleaseNotes) {
                 ReleaseNotesModalView()
                     .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+            }
+            .sheet(isPresented: $showWelcomeGuide) {
+                WelcomeGuideModalView()
+                    .presentationDetents([.fraction(0.85), .large])
                     .presentationDragIndicator(.visible)
             }
             .toolbar {
