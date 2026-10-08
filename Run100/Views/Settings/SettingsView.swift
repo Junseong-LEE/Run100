@@ -109,24 +109,25 @@ struct SettingsView: View {
                                     .font(.system(size: 15, weight: .semibold))
                                 
                                 if let shoe = activeShoe {
-                                    let totalDist = shoe.calculateTotalDistance(from: allSessions)
-                                    let percent = Int(shoe.wearRate(from: allSessions) * 100)
-                                    Text("\(shoe.name) · \(String(format: "%.1f", totalDist))/\(Int(shoe.targetLifespanKm))km (\(percent)%)")
+                                    Text(shoe.name)
                                         .font(.system(size: 12))
                                         .foregroundStyle(.secondary)
+                                        .lineLimit(1)
                                 } else {
                                     Text("러닝화를 등록하고 수명과 교체 주기를 트래킹하세요")
                                         .font(.system(size: 12))
                                         .foregroundStyle(.secondary)
+                                        .lineLimit(1)
                                 }
                             }
                             
                             Spacer()
                             
                             if let shoe = activeShoe {
+                                let percent = Int(shoe.wearRate(from: allSessions) * 100)
                                 let status = shoe.healthStatus(from: allSessions)
-                                Text(status.label)
-                                    .font(.system(size: 11, weight: .bold))
+                                Text("\(percent)%")
+                                    .font(.system(size: 11, weight: .bold, design: .rounded))
                                     .foregroundStyle(status.badgeColor)
                                     .padding(.horizontal, 7)
                                     .padding(.vertical, 3)
