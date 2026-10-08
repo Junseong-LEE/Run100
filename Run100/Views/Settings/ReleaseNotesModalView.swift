@@ -13,9 +13,21 @@ struct ReleaseNotesModalView: View {
     // 버전별 주요 변경점 목록
     private let releases: [ReleaseNoteItem] = [
         ReleaseNoteItem(
+            version: "v1.5.0",
+            date: "2026.10.09",
+            isLatest: true,
+            title: "신규 사용자 웰컴 가이드 탑재 & 설정/캘린더 UI 사용성 개선",
+            highlights: [
+                "💡 Run100 시작 가이드 탑재: 첫 사용자를 위한 5단계 스와이프 온보딩 가이드 모달 제공 (측정 대신 회고, 대시보드 성적표, 고스트 레이스, 잔디 심기, 러닝화 수명 관리)",
+                "👟 설정 화면 러닝화 행 개편: 서브타이틀 긴 텍스트를 제거하고 우측 배지를 소모율(%)로 표기하여 텍스트 줄바꿈 현상 완벽 해결",
+                "🌱 캘린더 잔디 범례 10k+ 줄바꿈 수정: 출석체크 히트맵 우상단 범례에서 '10k+' 기호가 두 줄로 분리되던 현상 원천 차단",
+                "🛡️ Firebase 테스트 계정 발급 방어: 단위 및 UI 자동화 테스트 실행 환경을 감지하여 더미 익명 유저 UID 생성 차단"
+            ]
+        ),
+        ReleaseNoteItem(
             version: "v1.4.1",
             date: "2026.10.03",
-            isLatest: true,
+            isLatest: false,
             title: "캘린더 화면 공간 최적화 & 산점도 다중 러닝 정밀 집계",
             highlights: [
                 "📐 캘린더 상단 통계 미니 바 정리: 출석체크 히트맵과 산점도 차트를 스크롤 없이 시원하게 조망할 수 있도록 상단 3분할 칩 바를 정리하고 뷰포트 영역 대폭 확보",

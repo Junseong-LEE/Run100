@@ -36,9 +36,9 @@ struct SettingsView: View {
     
     private let targetPresets: [Double] = [50.0, 100.0, 150.0]
     
-    /// 앱의 번들 버전 동적 로드 (예: "v1.4.1")
+    /// 앱의 번들 버전 동적 로드 (예: "v1.5.0")
     private var appVersionString: String {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.4.1"
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.5.0"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
         return "v\(version) (\(build))"
     }
